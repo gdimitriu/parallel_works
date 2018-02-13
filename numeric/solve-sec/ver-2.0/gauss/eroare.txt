@@ -1,0 +1,1 @@
+toti timpii sunt impartiti cu 11 in loc cu 10 fara omp (atentie numai la time)

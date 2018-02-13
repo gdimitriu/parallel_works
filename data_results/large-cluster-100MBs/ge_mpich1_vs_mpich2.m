@@ -1,0 +1,4 @@
+%for ge mpich1 vs mpich2
+plot(pii_500_ge_1500(:,1),pii_500_ge_1500(:,4)./ge_mpich1_2(:,4),':sred',pii_500_ge_1500(:,1),pii_500_ge_1500(:,4)./ge_mpich1_3(:,4),':sblue',pii_500_ge_1500(:,1),pii_500_ge_1500(:,4)./ge_mpich1_4(:,4),'s:green',pii_500_ge_1500(:,1),pii_500_ge_1500(:,4)./ge_mpich1_5(:,4),':scyan',pii_500_ge_1500(:,1),pii_500_ge_1500(:,4)./ge_mpich2_2(:,4),'red',pii_500_ge_1500(:,1),pii_500_ge_1500(:,4)./ge_mpich2_3(:,4),'blue',pii_500_ge_1500(:,1),pii_500_ge_1500(:,4)./ge_mpich2_4(:,4),'green',pii_500_ge_1500(:,1),pii_500_ge_1500(:,4)./ge_mpich2_5(:,4),'cyan');
+xlabel('Number of equations');
+ylabel('Speedup');

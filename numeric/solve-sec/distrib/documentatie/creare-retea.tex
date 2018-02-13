@@ -1,0 +1,288 @@
+\section{Crearea retelei si transmiterea matricii}
+
+\hspace{5mm}Deoarece am ales pentru impartirea matricii in linii ciclice, 
+versiunea prezentata in sectiunea \ref{partitionare-matrice}, trebuie
+ sa realizam o retea in inel intre sistemele care conlucreaza.
+
+Dupa ce se citeste, cu ajutorul functiei {\it int readconfig()} fisierul de
+configurare, avem structurile de date {\it adr} care contin adresa sistemului 
+respectiv si portul pe care se va face comunicarea cu clientul. Aceste adrese 
+sunt organizate intr-un vector de structuri in ordinea citirii, primul sistem 
+din acest vector va fi sistemul care va initializa conexiunea in inel.
+
+Functia {\it int configurare\_retea()} care este implementata in fisierul
+{\bf comunicatii\_client.h} implementeaza configurarea retelei, adica
+realizarea unei retea cu conexiuni in inel intre servere si fiecare server
+este conectat pe un port separat cu procesul master. De remarcat ca
+clientul este un client concurent pe cind serverele in acesta etapa nu sunt
+concurente.
+
+Realizarea retelei implica fazele:
+\begin{enumerate}
+\item Stabilirea legaturii intre procesul master si toate serverele.
+\item Transmiterea adreselor IP (anterioara si urmatoare) si porturilor.
+\item Realizarea conectarilor propriu-zise.
+\end{enumerate}
+
+\subsection{Protocolul de transmitere a adreselor}
+
+\hspace{5mm}Deoarece este o retea in inel fiecare server nu trebuie sa se
+conecteze decit cu serverul urmator si cel precedent. Pentru serverul
+urmator el este un client pe cind pentru serverul anterior este un server
+(primeste conectare). Conectarea cu cele doua servere se face pe porturi
+care sunt trimise de catre procesul master.
+De accea procesul master trebuie in prima etapa sa transmita porturile si
+numai adresa serverului urmator.
+
+Deoarece daca avem un sistem multiprocesor putem folosi acesta facilitate
+pornind mai multe servere pe acest sistem cu diferite porturi pentru
+conectarea cu procesul master, nu putem avea porturi fixe pentru conectarea
+cu serverul anterior si cel urmator. Ca atare porturile vor fi transmise de
+catre procesul master in etapa a doua a comunicatiei.
+
+Dupa ce a fost stabilita legatura cu toate serverele, toate socketurile pe
+care se face comunicarea se introduc intr-o lista de selectie de citire 
+(selectia se face cu ajutorul instructiunii {\it select}).
+
+Serverele dupa ce realizarea conectarea si pornesc un nou proces (conform
+tipologiei UNIX) transmit catre procesul master un mesaj "OK".
+
+Intr-o bucla conditionata de transmiterea tururor datelor catre servere se
+executa :
+
+Pentru toate servele se verifica daca a venit vreun mesaj de la server pe
+coada de read si daca da se executa, instructiunea {\it select} va astepta 
+numai 2 secunde :
+
+\begin{enumerate}
+\item Se citeste acest mesaj (pentru a nu ramine in buffer), el este folosit
+doar la sincronizare nu conteaza ce este in acel mesaj deoarece este
+ignorat.
+\item Se transmite zero daca este primul server si unu pentru celelalte
+servere.
+\item Formez un vector cu doua pozitii in care memorez cele doua porturi.
+Pozitia zero este pentru serverul urmator iar pozitia unu este pentru
+serverul anterior. De remarcat ca acestea pornesc de la portul 55002, de
+fapt 55001 este adresa primului server si 55002 este adresa celui de-al
+doilea server, adresele sunt ale serverelor din interiorul serverelor
+(adresele de conectare in jos).
+\item Se transmite acest vector catre server.
+\item Se transmite adresa IP a serverului urmator.
+\item Se receptioneaza mesajul primit de la server.Se ignora (este un mesaj
+de sinconizare.
+\item Se seteaza vectorul {\it ready} la pozitia serverului.
+\item Scot din acest server din coada de read.
+\end{enumerate}
+
+Daca vectorului {\it ready} este numarul de servere se seteaza un flag {\it
+flag\_iresire} care realizeaza conditia de iesire din bucla.
+
+\subsection{Protoculul de realizare a inelului}
+
+\hspace{5mm} Deoarece conexiunile prin socketuri sunt blocante si in 
+implementarea de fata nu se poate face si transmie si receptie in acelasi 
+timp trebuie o disciplina in realizarea conexiunilor. Acesta se poate
+observa din \ref{realizare-inel} unde sunt prezentate functiile pentru
+relizarea inelului in servere.
+Acesta s-ar putea face daca avem doua threaduri concurente: unul pentru 
+emisie si altul pentru receptie.
+
+Disciplina in realizarea conexiunii inseamna ca serverul intii va satisface
+legatura cu serverul anterior si peurma va initiliza conexiunea cu serverul
+urmator. Exceptie la regula prezentata face primul server care va realiza
+intii conexiunea cu serverul urmator si apoi va satisface conexiunea cu
+serverul anterior. Acesta deoarece el ca in cazul unei explozii in lant este
+detonatorul urmind ca prin simpatie sa se realizeze si celelalte conexiuni.
+De asemenea pentru a ne lua o masura de preverede, deoarece nu stim cit de
+rapide sunt conexiunile si masinile, primul server va incepere realizarea
+conexiunilor numai dupa ce toate celalte servere au confirmat ca sunt in
+pozitia de asteptare ({\it accept} din etapa de initializare a conexiunii prin
+socketuri.
+
+Etapa de conectare a inelului se realizeaza cu ajutorul a doua functii {\it
+conect\_sv\_up()} pentru conectare catre serverul urmator care se executa
+prima pentru sprimul server si a doua pentru al doilea server si {\it
+conect\_sv\_dw()} pentru conectare catre serverul anterior care se executa a
+doua pentru primul server si prima pentru celelalte servere.
+
+Pentru serverele diferite de zero:
+\begin{enumerate}
+\item Astept mesajul "START" daca acest mesaj nu este start mai astept un
+mesaj si apoi inchid socketul deoarece serverele dinaintea lui nu au pornit.
+\item Pornesc functia {\it conect\_sv\_dw} care realizeaza conectarea in jos
+(Adica porneste un server). 
+\item Dupa ce fac {\it listen} trimit catre clientul\_master un mesaj "ACK"
+care spune ca in pina aici totul a mers bine. Daca nu a mers bine se
+transmite catre procesul master codul de eroare si se asteapta mesajul de
+terminare a conexiunii.
+\item Procesul master asculta pentru toate serverele si daca unul sau mai
+multe nu trimit mesajul "ACK" ci trimit codurile de eroare trimite catre
+toate serverele un mesaj "EXIT" care va inchide inelul.
+\item Daca totul este bine se transmite un mesaj de pornire "START" catre
+toate serverele care receptionind acest mesaj vor realiza functia accept
+(blocanta).
+\item In final se transmite catre primul server mesajul de pornire "START"
+care incepe realizarea conexiunilor in inel.
+\end{enumerate}
+
+\subsection{Trimiterea matricii}
+
+\hspace{5mm}Dupa ce se realizeaza conectarea in inel se citeste matricea din
+fisier cu ajutorul functiei {\it read\_data} se realizeaza citirea matricei si 
+impartirea ei catre servere. In final avem pentru fiecare sistem, aceste
+fiind organizate intr-un vector de structuri {\it sdata} care contine: o 
+matrice de marimea (nr\_variabile+1 x nr\_variabile/nr\_procesoare), un
+vector de marimea (nr\_variabile/nr\_procesoare), un contor care va indica
+cite linii sunt alocate de fapt sistemului deoarece matricea si vectorul sunt
+supradimensionate la marimea maxima prin rotunjire superioara si o variabila
+ultim care este un flag care ne spune daca acest sistem are ultima ecuatie
+din sistemul de ecuatii (este folosit de catre {\bf back-substitution} si
+eliminarea Gaussiana).
+
+Acesta parte de transmitere este de asemenea concurenta si este realizata
+asemanator cu transmiterea adreselor catre servere, este implementata in
+functia {\it send\_data()} din fisierul {\bf comunicatii\_client.h} fiind
+prezentata in sectiunea \ref{send-linii}.
+
+Trimiterea matricii se face in doua etape:
+\begin{enumerate}
+\item Se transmite numarul de variabile si numarul de linii care ii revim
+masinii.
+\item Se transmite matricea pe linii.
+\end{enumerate}
+
+Catre server trebuie trimise urmatoarele date in prima etapa: numarul de variabile
+(necunoscute) si numarul de linii pentru care se face prelucrarea (acest
+numar poate diferi de la o masina la alta in functie de cum se poate imparti
+numarul de variabile la numarul de servere pe care le avem la dispozitie) si
+bineinteles matricea care ii revine.
+
+Intr-o bucla conditionata de transmiterea tuturor datelor primei faze se
+executa:
+
+Pentru toate serverele se verifica daca a venit vreun mesaj pe coada de read
+si daca da se executa pentru serverul respectiv:
+\begin{enumerate}
+\item Citesc acest mesaj pentru a nu ramine in coada, el este ignorat.
+\item Transmit numarul de necunoscute (varibiabile) care este egal cu
+numarul de linii si coloane ale matricii.
+\item Transmit numarul de linii de prelucrat care ii revin serverului
+respectiv. Acest numar de obicei este diferit de la un server la altul
+deoarece de obicei nu se poate imparti corect matricea la numarul de servere
+pe care le avem.
+\item Transmit care masina este ultima ca ecuatii (care masina are ultima
+ecuatie din sistem, masina de la care se va porni back-substitution).
+\item Scot din coada de read serverul respectiv si setez variabila din {\it
+ready}.
+\end{enumerate}
+
+Din bucla while se iese in momentul in care toate serverele au primit datele
+ce ii revin testind ca suma valorilor din vectorul {\it ready} sa fie egala
+cu numarul de servere.
+
+In acest moment serverele au date despre lungimea matricii si pot face
+alocare dinamica pentru matrice (aici se intelege coloanele si termenul
+liber).
+
+Dupa ce se face alocarea matricii serverele initiaza faza a doua a
+conexiunii in care se cer liniile matricii.
+
+Intr-o bucla conditionata de transmiterea tuturor liniile matricii se
+executa:
+
+Pentru toate serverele se verifica daca a venit vreun mesaj pe coada de read
+si daca da se executa pentru serverul respectiv:
+\begin{enumerate}
+\item Citesc acest mesaj pentru a nu ramine in coada, el este ignorat.
+\item Trimit liniile alocate serverului, una cite una cu ajutorul functiei
+{\it write} care nu este o functie blocanta si are avantajul ca poate
+trimite blocuri binare de date.
+\item Trimit vectorul de linii (un vector in care se spune fiecare linie
+care este in cadrul  matricii sistemului de ecuatii), se trimite tot cu
+functia {\it write} deoarece stie sa transmita un vector intreg de date
+float.
+\item Scot din coada de read serverul respectiv si setez variabila din {\it
+ready}.
+\end{enumerate}
+
+Din bucla while se iese in momentul in care toate serverele au primit liniile 
+ce ii revin testind ca suma valorilor din vectorul {\it ready} sa fie egala
+cu numarul de servere.
+
+Din acest moment toate serverele au matricea de date care ii revine si poate
+incepe prelucrearea liniilor prin algoritmul Gauss-Jordan.
+
+Structurile de date pe care le avem in procesul\_master pot fi acum
+dealocate deoarece nu mai avem nevoie de ele.
+\section{Trimiterea datelor}
+
+\hspace{5mm}Dupa ce sistemul a fost rezolvat rezultatele sistemului sunt in
+prima masina in variabila rezultate. Aceasta functie este in fisierul
+{\it comunicatii\_client} si are numele {\bf recv\_data()} pentru client si
+este implementata in cadrul fisierului {\it gaussd.c}.
+
+Cind datele sunt gata serverul 0 transmite un mesaj catre client un "0"
+catre trigereaza functia {\bf recv\_data()} dupa care se transmite
+rezultate.
+
+Acum este intrebat utilizatorul daca doreste o scoatere a datelor intr-un
+fisier, in special daca sitemul este cu foarte multe necunoscute. Daca nu se
+ doreste se afiseaza pe ecran. Daca se doreste este intrebat de numele
+fisierului pina cind aceste poate fi scris, este intrebat din nou daca apare
+o eroare.
+
+Dupa afisarea sau scoaterea intr-un fisier a datelor. Utilizatorul este
+intrebat daca doreste o reintroducere a unui alt sistem de ecuatii. Nu se
+recomanda pentru ca inca acest lucru nu functioneaza foarte bine.
+
+Daca se doreste o reintroducere se trimite catre servere mesajul de "READY"
+care trimit serverele in faza a doua a protocolului de comunicatie iar
+clientul in faza de introducere a sistemului. Bineinteles ca se eliberaza
+memoria si se va trece din nou prin faza de alocare a memoriei.
+
+Daca se doreste iesire se trece la protocolul de inchidere a conexiune si
+distrugere a inelului, protocol care este prezentat in sectiunea urmatoare.
+
+\section{Distrugerea inelului}
+
+\hspace{5mm}Protocolul de distrugere a inelului este implementat in
+fisierul {\it comunicatii\_client.c} in functie {\it inchid\_sistem()} iar
+in server in fuctiile {\bf deconectez\_up} si {\bf deconectez\_dw()}
+prezentate in \ref{deconectare-inel}.
+
+Prima etapa consta in distrugerea legaturilor dintre servere si client.
+Acesta se realizeaza trimitind de la client un mesaj, "EXIT", si
+retransmiterea de catre server a acestui mesaj, dupa care se inchide
+conexiunea cu serverul din partea clientului. Acesta fiind un lient
+concurent se realizeaza bineinteles cu ajutorul instructiunii de selectie
+{\it select} la cererea serverului. Dupa acesta se dealoca partile de
+memorie alocate dinamic, in client si in server, dupa care se trece la etapa
+a doua a deconectarii inelului. Deci clientul a iesit iar acesta se executa
+numai intre servere.
+
+A doua etapa se executa diferentiat in functie de numarul de ordine al
+serverului. Exista doua functii {\bf deconectez\_up()} si {\bf
+deconectez\_dw()} care deconecteaza clientul respectiv serverul.
+
+In toate sistemele cu exceptia primului sistem se deconecteaza intii
+serverul si apoi clientul, pentru primul sistem se deconecteaza intii
+clientul si apoi serverul deoarece ca la creearea inelului trebuie sa existe
+un sistem care declanseaza dezactivarea in lant a inelului.
+
+Functia de deconectare a clientului are pasii:
+
+\begin{enumerate}
+\item Trimite catre server un mesaj, "EXIT".
+\item Receptioneaza de la server un mesaj, "EXIT", care este oglindirea
+mesajului trimis de catre client.
+\item Inchide socketul de comunicatie, clientul.
+\end{enumerate}
+
+Pentru server este aceeasi rutina ca pentru client dar in oglinda deoarece
+clientul trebuie sa aiba un partener de discutie, care este serverul.
+
+Dupa ce se deconecteaza serverul se deconecteaza si clientul, pentru primul
+sistem intii se deconecteaza clientul si apoi serverul.
+
+Cind se iese din procesul fiu serverul este gata oricind sa preia o noua
+conexiune de la client.

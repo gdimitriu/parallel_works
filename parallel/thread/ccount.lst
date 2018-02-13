@@ -1,0 +1,16 @@
+   ccount 1.0:	  NCSS  Comnts  Funcs  Blanks  Lines
+gauss_striped_fast.c:	   187     57      3      4    335
+matrix_mult_check.c:	    67     19      2      3    113
+matrix_mult_striped.c:	    60     18      3      5    121
+matrix_mult_vect_striped.c:	    35     11      2      2     66
+matrix_pow_check.c:	   125     21      2      3    191
+matrix_pow_striped.c:	   143     23      3      5    236
+pthread_barrier.c:	    22      5      4      1     48
+pthread_barrier_sem.c:	    22      7      2      1     45
+pthread_semaphores.c:	    19      5      4      0     41
+triunghiular_UP_striped.c:	   156     38      3      4    267
+./include/matrix.h:	    43     58      0      1     80
+./include/parallel.h:	     0      3      0      0      8
+./include/pthread_barrier.h:	    26      7      0      3     40
+./include/solve.h:	    12     35      0      0     44
+       Totals:	   917    307     28     32   1635

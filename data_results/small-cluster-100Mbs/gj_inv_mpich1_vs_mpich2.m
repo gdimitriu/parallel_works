@@ -1,0 +1,4 @@
+% inv with gj mpich1 vs mpich2
+plot(dual_gj_inv_gcc(:,1),dual_gj_inv_gcc(:,4)./gj_inv_mpich1_2(:,4),':sred',dual_gj_inv_gcc(:,1),dual_gj_inv_gcc(:,4)./gj_inv_mpich1_3(:,4),':sblue',dual_gj_inv_gcc(:,1),dual_gj_inv_gcc(:,4)./gj_inv_mpich1_4(:,4),':sgreen',dual_gj_inv_gcc(:,1),dual_gj_inv_gcc(:,4)./gj_inv_mpich1_5(:,4),':scyan',dual_gj_inv_gcc(:,1),dual_gj_inv_gcc(:,4)./gj_inv_mpich2_2(:,4),'red',dual_gj_inv_gcc(:,1),dual_gj_inv_gcc(:,4)./gj_inv_mpich2_3(:,4),'blue',dual_gj_inv_gcc(:,1),dual_gj_inv_gcc(:,4)./gj_inv_mpich2_4(:,4),'green',dual_gj_inv_gcc(:,1),dual_gj_inv_gcc(:,4)./gj_inv_mpich2_5(:,4),'cyan');
+xlabel('Number of equations');
+ylabel('Speedup');

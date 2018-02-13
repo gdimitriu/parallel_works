@@ -1,0 +1,326 @@
+\chapter{Metoda Gauss-Jordan}
+
+\hspace{5mm}In acest sectiune discutam problema rezolvari unui sistem de
+ecuatii liniar de forma:
+$$\begin{array}{ccccc}
+a_{0,0}x_0&+a_{0,1}x_1&+...\ldots&+a_{0,n-1}x_{n-1}&=b_0\\
+a_{1,0}x_0&+a_{1,1}x_1&+...\ldots&+a_{1,n-1}x_{n-1}&=b_1\\
+\vdots&\vdots&&\vdots&\vdots\\
+a_{1,0}x_0&+a_{1,1}x_1&+...\ldots&+a_{1,n-1}x_{n-1}&=b_1\\
+\end{array}$$
+
+In notatia matriceala sistemul se poate scrie $Ax=b$. Unde A este o matrice
+densa n x n cu coeficientii $A[i,j]=a_{i,j}$ iar b este un vector n x 1
+$[b_0,b_1,\ldots,b_{n-1}]^T$ si x este vectorul solutiei dorite
+$[x_0,x_1,\ldots,x_{n-1}]^T$.
+
+Sistemul de ecuatii Ax=b este uzual rezolvat in doua etape. In prima dupa o
+serie de manipulari algebrice, sistemul orginal este redus la un sistem
+superior-tringular de forma:
+$$\begin{array}{cccccc}
+x_0&+u_{0,1}x_1&+u_{0,2}x_2&+\ldots&+u_{0,n-1}x_{n-1}&=y_0\\
+&x_1&+u_{1,2}x_2&+\ldots&+u_{1,n-1}x_{n-1}&=y_1\\
+&&&&\vdots&\vdots\\
+&&&&x_{n-1}&=y_{n-1}
+\end{array}$$
+
+Acest sistem se poate scrie ca Ux=y, unde U este o matrice superior
+triunghiulara unitara in care toate intrarile de sub diagonala principala
+sunt zero iar diagonala principala este unu. Formal $U[i,j]=0\; daca\; i>j$,
+altfel $U[i,j]=u_{i,j}$, iar $U[i,i]=0\; daca\; 0\le i<n$. In a doua etapa a
+rezolvari sistemului de ecuatii liniare, matricea superior-triunghiulara
+este rezolvata in ordine inversa pentru $x[n-1]$ la $x[0]$ cu o procedura
+cunoscuta ca {\bf back-substitution}.
+\pagebreak
+\section{Algoritmul Gauss-Jordan}
+
+\hspace{5mm}Acest algoritm este descris pe larg in \cite[178-196]{kumar}
+\subsection{Implementarea secventiala}
+
+\hspace{5mm}Eliminarea Gaussiana seriala are trei bucle cu teste. Exista
+citeva variatii ale acestui algoritm, depinzind de ordinea in care sunt
+aranjate buclele. Programul urmator este cel pe care il vom adopta pentru
+implementarea paralela.
+$$Programul\; 1$$
+\label{program54}
+\begin{enumerate}
+\item {\bf procedure} GAUSSIAN\_ELIMINATION(A,b,y)
+\item {\bf begin}
+\item \hspace{5mm}{\bf for} k:=0 {\bf to} n {\bf do} //bucla externa
+\item \hspace{5mm}{\bf begin}
+\item \hspace{10mm} {\bf for} j:=k+1 {\bf to} n-1 {\bf do}
+\item \hspace{15mm} $A[k,j]:=A[k,j]/A[k,k]$; // pasul diviziunii
+\item \hspace{10mm} $y[k]:=b[k]/A[k,k]$;
+\item \hspace{10mm} $A[k,k]:=1$;
+\item \hspace{10mm} {\bf for} i:=k+1 {\bf to} n-1 {\bf do}
+\item \hspace{10mm} {\bf begin}
+\item \hspace{15mm} {\bf for} j:=k+1 {\bf to} n-1 {\bf do}
+\item \hspace{20mm} $A[i,j]:=A[i,j]-A[i,k]\cdot A[k,j]$; //pasul eliminare
+\item \hspace{15mm} $B[i]:=b[i]-A[i,k]\cdot y[k]$;
+\item \hspace{15mm} $A[i,k]:=0$;
+\item \hspace{10mm} {\bf endfor;}\hspace{10mm}// linia 9
+\item \hspace{5mm} {\bf endfor;}\hspace{15mm}//linia 3
+\item {\bf end} GAUSSIAN\_ELIMINATION;
+\end{enumerate}
+
+Acest program converteste un sistem de ecuatii liniar Ax=b catre un sistem
+superior triungiular Ux=y. Se presupune ca matricea U ocupa aceeasi portiune
+de memorie ca si A si este rescrisa pe portiunea superioara a lui A.
+Elementul $A[k,j]$ calculat la linia 6 a programului 1 este
+de fapt $U[k,j]$. Similar elementul $A[k,k]$ atribuit cu 1 la linia 8 este
+$U[k,k]$. Programul 1 presupune ca $A[k,k]\ne0$ cind il utilizeaza ca
+divizor in liniile 6 si 7.
+
+In acesta sectiune ne vom concentra numai pe operatiile asupra matricii A in
+programul 1. Operatiile asupra vectorului b pe liniile 7 si 13 ale
+programului se implementeaza la fel. De altfel in restul sectiunii vom
+ignora acesti pasi. Daca pasii din liniile 7,8, 13 si 14 nu se efectueaza
+atunci programul 1 da ca factorizarea LU a matricii A ca un produs L x U.
+Dupa ce s-a terminat procedura, L este stocat in partea inferioara
+triunghiulara a matricii A, si U ocupa locatiile sub diagonala principala.
+
+Pentru k variind intre 0 si n-1, procedura eliminarii Gaussiane elimina
+sistematic variabilele $x[k]$ de la ecuatiile k+1 la n-1 deci de aceea
+matricea de coeficienti devine superior-tringhiulara. Cum se vede din
+programul 1,  in iteratia k a buclei exterioare (pornita la linia 3), un
+apropiat multiplu a ecuatiei k este scazuta din fiecare ecuatie de la k+1 la
+n-1 (bucla pornita de la linia 9). Multiplele ale ecuatie k (sau linii
+matricii A) sunt alese astfel incit coeficientii k devin zero in ecuatiile
+de la k+1 la n-1 eliminind $x[k]$ din aceste ecuatii. O implementare tipica
+a procedurii eliminarii Gaussiene in iteratia k a buclei exterioare este
+aratata in figura de mai jos. Iteratia k a bulei exterioare nu impune nici
+un calcul  pe rindurile de la 1 la k-1  sau coloanele de la 1 la k-1. De
+altfel in acest stadiu numai partea de jos-dreapta k x k a submatricii A
+(portiunea comuna in figura de mai jos) este activa din punct de vedere al
+calcului.
+
+\vspace*{5mm}
+\includegraphics{gauss.ps}
+\vspace*{5mm}
+
+
+Eliminarea Gaussiana implica $n^2/2$ diviziuni (linia 6) si aproximativ
+$(n^3/3)-(n^2/2)$ scaderi sau inmultiri (linia 12). In acesta sectiune, vom
+presupune ca fiecare operatiune scalara tine o unitate de timp. Cu aceast
+presupunere, timpul de lucru secvential este aproximativ $2n^3/3$ pentru n
+mare:
+$$W-\frac{2}{3}n^3$$
+
+\subsection{Implementare paralela cu partitionare pe benzi orientate}
+
+\hspace{5mm}In acesta sectiune vom prezenta implementarea programului 1
+paralel cu partitionare in benzi orientate pe linii. Foarte similara este si
+implementarea cu partionare in benzi orientate pe coloane.
+
+Consideram ca o linie este asignata unui singur procesor  deci matrice A n x
+n este impartita la n procesoare notate $P_0,P_1,\ldots ,P_{n-1}$. In acesta
+mapare procesorul $P_i$ initial stocheaza elementele $A[i,j]$ pentru $0\le
+j<n$.
+
+Programul 1 ne arata ca $A[k,k+1],A[k,k+2],\ldots, A[k,n-1]$ sunt
+impartite la $A[k,k]$ (linia 6) la inceputul iteratiei k. Toate matricile
+implicate in acest proces apartin unui singur procesor. Deci acest pas nu
+necesita o comunicatie, in partea a doua a calcului (pasul de eliminare de
+la linia 12), elementele (dupa impartire) liniei k sunt utilizate de
+celelalte linii ale matricii active. Deci avem nevoie de o distribuire unul la
+ toti  pentru linia k catre procesoarele care stocheaza liniile de la k-1 la
+n-1. In final se face calculul $A[j,j]:=A[i,j]-A[i,k]\dot A[k,j]$ care se
+suprascrie peste matricea ramasa.
+
+Numarul de calcule in iteratia k sunt n-k-1 diviziuni pentru  procesorul
+$P_k$. Similar calculele implica n-k-1 inmultiri si scaderi in iteratia k
+pentru toate $P_i$ cu $k<i<n$. Presupunind ca o singura operatie aritmetica
+ia un timp unic, timpul total petrecut in calcul in iteratia k este
+$3(n-k-1)$. Atentie cind se realizeaza diviziunea, procesoarele ramase p-1
+sunt idle, iar cind procesoarele $P_{k+1},\ldots,P_{n-1}$ fac eliminarea ,
+procesoarele $P_0,\ldots,P_k$ sunt idle. Complexitatea de calcul a acestei
+implementari este $3\sum_{k=0}^{n-1}(n-k-1)$ care face $\frac{3\dot
+n(n-1)}{2}$.
+
+Pasii de comunicare iau $(u_s+t_w(n-k-1))$ pe un hipercub. Deci in total
+timpul de comunicare este $\sum_{k=0}^{n-1}(t_s+t_w(n-k-1))\log n$ care
+este egal cu $t_sn\log n+t_w(n(n-1)/2)$. Timpul total paralel de lucru al
+acestui algoritm pe hipercub este:
+$$ T_p=\frac{3}{2}n(n-1)+t_sn\log n+\frac{1}{2}t_wn)n-1)\log n$$
+
+Deoarece numarul de procesoare este n, costul, sau produsul procesor-timp,
+este $(O(n^3\log n)$. Acest cost este mai mare asimptotic fata de timpul de
+lucru al algoritmului secvential deci acest algoritm paralel nu este cost
+optimal.
+
+\subsection{Implementarea cu comunicatie pipeline}
+
+\label{implementare}
+\hspace{5mm}Acum vom prezenta impelementarea eliminareii Gaussiene care este
+cost-optimal pe un inel de n procesoare, retea sau hipercub pentru o matrice
+de coeficienti de n x n.
+
+In algoritmul paralel prezentat in sectiunea precedenta cele n iteratii ale
+buclei externe ale programului 1 sunt executate secvential. La un anumit
+timp, toate procesoarele lucreaza la aceeasi iteratie. Iteratia k+1 porneste
+numai dupa ce toate calculele si comunicatiile iteratiei k s-au terminat.
+Performanta algoritmului poate fi imbunatatita substantial daca procesoarele
+lucreaza asincron; astfel nici un procesor asteapta alt procesor pentru a
+termina iteratia pentru a porni cealalta iteratie. Acesta se numeste
+versiunea {\bf asicrona sau pipeline} a elimianrii Gaussiene. Figura de mai
+jos ilustreaza programul 1 executat pipeline pentru o matrice 5 x 5
+impartita logic pe un vector liniar de 5 procesoare.
+
+In timpul iteratiei k din programul 4.5, procesorul $P_k$ transmite o parte
+a rindului k a matricii procesoarelor $P_{k+1},\ldots,P_{n-1}$. Presupunem
+ca procesoarele sunt conectate intr-un vector liniar, iar $P_{k+1}$ este
+primul procesor care receptioneaza rindul k de la procesorul $P_k$. Apoi
+procesorul $P_{k+1}$ trebuie sa trimita mai departe acesta data catre
+$P_{k+2}$. De altfel dupa trimitrea rindului k catre $P_{k+2}$, procesorul
+$P_{k+1}$ nu trebuie sa astepte pentru a incepe etapa eliminarii (linia 12)
+pina cind procesoarele pina la $P_{n-1}$ au receptionat rindul k. Similar,
+$P_{k+2}$ poate incepe prelucrarea imediat dupa ce a transmis rindul k catre
+$P_{k+3}$ si asa mai departe. Intre timp dupa terminarea calcului de la
+iteratia k, $P_{k+1}$ poate realiza etapa diviziunii (linia 6), si sa
+porneasca sa trimita rindul k+1 catre $P_{k+2}$.
+
+In eliminarea Gaussiana pipeline fiecare procesor independent realizeaza
+urmatoare secventa de actiuni repetitiv pina cind cele n iteratii se
+termina. Din considerente de simplicitate, presupunem ca pasii 1 si 2 iau
+acelasi timp de procesare (acesta presupunere nu afecteaza analiza):
+
+\begin{enumerate}
+\item Daca un procesor are data destinata pentru alte procesoare, trimite
+acesta data catre cel mai apropiat procesor.
+\item Daca procesorul poate realiza prelucrari utilizind datele pe care le
+are le va face.
+\item Altfel, procesorul va astepta receptionarea date pentru una din
+actiunile de mai sus.
+\end{enumerate}
+
+Figura \ref{5x5} prezinta cei 16 pasi in executia paralela pipeline a
+eliminarii Gaussiene pentru o matrice 5 x 5 impartita pe 5 procesoare. In
+figura \ref{5x5}(a) , primul pas este sa realizam diviziunea pe rindul
+0 in procesorul $P_0$. Rindul 0 modificat este trimis la $P_1$ (figura 
+\ref{5x5}(b)), care il retransmite la $P_2$ (figura \ref{5x5}(c). Acum $P_1$
+este liber sa realizeze etapa eliminarii utilizind rindul 0 (figura
+\ref{5x5}(d)). In etapa urmatoare (figura \ref{5x5}(e)),$P_2$ realizeaza
+etapa eliminarii utilizind rindul 0. In acelasi timp, $P_1$, terminind
+calculul pentru iteratia 0, porneste etapa de diviziune a iteratiei 1. La un
+timp dat, diferite stadii ale aceleasi iteratii pot fi active pe diferite
+procesoare. In figura \ref{5x5}(h) procesorul $P_2$ realizeaza eliminarea la
+iteratia 1 in timp ce procesarele $P_3$ si $P_4$ sunt angajate in
+comunicarea pentru aceeasi iteratie. De altfel mai mult de o iteratie poate
+fi activa simultan pe diferite procesoare. In figura \ref{5x5}(i)
+procesorul $P_2$ executa etapa diviziunii pentru iteratia 2 in timp ce
+procesorul $P_3$ realizeaza eliminarea de la pasul 1.
+
+\vspace*{5mm}
+\label{5x5}
+\hspace{20mm}Figura \ref{5x5}
+\includegraphics{matrice.ps}
+\vspace*{5mm}
+
+Acum vom arata ca, spre deosebire de algoritmul sincron in care toate
+procesorele sunt in acceasi iteratie intr-un timp dat, versiunea pipeline
+sau asincrona a eliminarii Gaussiene este cost optimala. In figura \ref{5x5}
+ne arata initializarea unor iteratii consecutive ale buclei externe a
+programului 1. Un total de n iteratii sunt initiate. 
+Ultima iteratie modifica numai coltul de dreapta-jos
+a matricii, de altfel el este terminat intr-un timp constant dupa
+initilizare. Numarul total de pasi in intrega procedura a est O(n). In
+fiecare pas, impreuna O(n) elemente sunt comunicate intre procesoarele direct
+conectate, sau pasul de diviziune este realizat pe O(n) elemente ale
+rindului, sau etapa de eliminare este realizata pe O(n) elemente ale
+rindului. Fiecare din aceste operatii iau O(n) timp. De altfel intrega
+procedura consta in O(n) pasi fiecare de compexitate O(n), si rularea sa
+paralela este $O(n^2)$. Deoarece sunt utilizate n procesoare costul este
+$O(n^3)$, care este de acelasi ordin ca eliminarea Gaussiana secventiala.
+Deci  versiunea pipeline a eliminaraii Gaussiene este cost opetimala pe un
+vector liniar de procesoare. Deoarece un vector liniar de procesore poate fi
+implementat pe o retea sau hipercub acest algoritm este cost optimal pentru
+aceste arhitecturi.
+
+\subsection{Impartirea pe mai putin de n procesoare}
+
+\label{algoritm}
+\hspace{5mm}Implementarea precedenta pipeline paralela a eliminarii Gaussiene 
+este usor de adaptat pentru cazul in care avem $n>p$. Adica a impartirii
+unei matrice n x n pe p procesoare.
+
+Dupa cum am prezentat in sectiunea \ref{partitionare-matrice} sunt doua
+tipuri de partitionare pentru impartirea pe benzi orientate: partitionare pe 
+blocuri si partitionare ciclica.
+
+In cazul partitionarii pe blocuri fiecarui procesor ii revin un numar de
+rinduri continue n/p. La iteratia k algoritmul trebuie ca partea activa a
+rindului k sa fie trimisa catre procesoarele care stocheaza rindurile
+$K+1,k+2+\ldots,n-1$. Fiecare procesor va executa (n-k-1)n/p multiplicari si
+eliminari in timpul pasului de eliminare la iteratia k. In ultimile n/p-1
+iteratii nici un procesor nu are rinduri active. In implementare pipeline
+numarul de operatii aritmetice la iteratia k este (2(n-k-1)n/p) este mult
+mai mare decit numarul de cuvinte comunicate (n-k-1) de catre un procesor in
+acceasi iteratie. De altfel pentru un n foarte mare si un p rezonabil
+timpul accesat operatiilor aritmetice este cu mult mai mare decit timpul
+necesar comunicatiei. Presupunind ca o inmultire scalara si o scadere ia
+aceeasi unitate de timp, timpul total de rulare al acestui algoritm
+(ignorind depasirile in comunicatii) este $2(n/p)\sum_{k=0}^{n-1}(n-k-1)$
+care este aproximativ egal cu $n^3/p$. Deci se poate observa ca desi au fost
+ignorate timpul de comunicatie timpul este cu 3/2 mai mare decit timpul de
+lucru al unui algoritm secvential. Ineficenta se datareaza ca datorita
+impartirii unele procesoare sunt idle, altele partial incarcate si altele
+complet active.
+
+Acesta se poate rezolva impartind matricea ciclic in care toate procesoarele
+sunt incarcate la fel exceptind o linie. Deorece sunt n iteratii depasirea
+in cazul unui procesor idle este numai de $O(n^2)$ data de $O(n^3)$ pentru
+impartirea pe bocuri.
+\subsection{Rezolvarea sistemului tringular {\bf Back Substitution}}
+
+\label{substitutie}
+\hspace{5mm}Acum vom prezenta a doua etapa din rezolvarea unui sistem de
+ecuatii liniare. Dupa ce matricea plina A a fost redusa la o matrice
+superior triunghiulara U cu unu pe diagonala principala, vom realiza
+back-substitution pentru a determina vectorul x. Un algoritm secvential
+pentru rezolvare sistemului de ecuatii Ux=y este prezentat mai jos in
+programul 2.
+
+$$Programul\; 2$$
+\begin{enumerate}
+\item {\bf procedure} BACK\_SUBSTITUTION(U,x,y)
+\item {\bf begin}
+\item \hspace{5mm}{\bf for} k:=n-1 {\bf downto} 0 {\bf do} //bucla
+principala
+\item \hspace{5mm}{\bf begin}
+\item \hspace{10mm} $x[k]:=y[k]$;
+\item \hspace{10mm}{\bf for} i:=k-1 {\bf downto} 0 {\bf do}
+\item \hspace{15mm} $y[i]:=y[i]-x[k]\cdot U[i,k]$;
+\item \hspace{5mm} {\bf endfor};
+\item {\bf end} BACK\_SUBSTITUTION
+\end{enumerate}
+
+Pornind de la ultima ecuatie, la fiecare iteratie a buclei principale
+(liniile 3-8) a programului 2 se realizeaza calcularea variabilei si
+substituitia ei inapoi in ecuatiile ramase. Programul realizeaza aproximativ
+$n^2/2$ inmultiri si scaderi. A se nota ca numarul de operatii aritmetice
+din back-substituition este mai mic decit in eliminarea gausiana cu un
+factor de O(n).
+
+Daca consideram impartirea matricii U (n x n) pe rinduri in blocuri pe p
+procesoare, iar vectorul y distribuit uniform pe procesoare. Valoarea
+variabilei rezulvata intr-o iteratie tipica a buclei principale trebuie sa
+fie trimisa catre celelalte procesoare. Comunicatia poate fi realizata pipeline.
+Dar se  poate observa ca timpul predominant in acesta etapa este comunicatia
+dintre procesoare fata de realizarea operatiilor. In fiecare iteratie a
+implementarii pipeline un procesor receptioneaza (sau genereaza) valoarea
+unei variabile si o trimite acesta valoare la procesorul urmator. Utilizind
+valoarea variabilei primite procesorul realizeaza de asemena cele n/p
+inmultiri si scaderi (liniile 6 si 7). Deci  fiecare pas al implementarii
+pipeline cere un timp constant de comunicatie si O(n/p) timp de calcul.
+Algoritmul se termina in O(n) pasi iar timpul total de lucru paralel este
+$O(n^2/p)$.
+
+Daca matricea este impartita in blocuri pe o retea logica de procesoare 
+$\sqrt{p}\; x\; \sqrt{p}$  si elementele vectorului sunt distribuite de-a
+lungul unei coloane a retelei de procesoare, numai cele $\sqrt{p}$ procesore
+care contin vectorul realizeaza calcule. Utilizind comunicatie pipeline
+pentru a comunica elementele apropiate ale matricii U catre procesorul care
+contine elementul y corespunzator (linia 7), algoritmul poate fi executat in
+timpul $O(n^2/\sqrt{p})$. De altfel costul implemnterarii paralele a
+algoritmului back-substitution cu mapare pe blocuri este $O(n^2\sqrt{p})$.
+Algoritmul nu est cost optimal deoarece costul secvential este $O(n^2)$.

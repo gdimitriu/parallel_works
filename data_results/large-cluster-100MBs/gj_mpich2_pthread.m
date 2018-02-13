@@ -1,0 +1,4 @@
+% GJ mpich2 vs mpich2 with pthread
+plot(pii_500_gj_1500(:,1),pii_500_gj_1500(:,4)./gj_mpich2_2(:,4),':sred',pii_500_gj_1500(:,1),pii_500_gj_1500(:,4)./gj_mpich2_3(:,4),':sblue',pii_500_gj_1500(:,1),pii_500_gj_1500(:,4)./gj_mpich2_4(:,4),'s:green',pii_500_gj_1500(:,1),pii_500_gj_1500(:,4)./gj_mpich2_5(:,4),':scyan',pii_500_gj_1500(:,1),pii_500_gj_1500(:,4)./gj_pthread_mpich2_2(:,4),'red',pii_500_gj_1500(:,1),pii_500_gj_1500(:,4)./gj_pthread_mpich2_3(:,4),'blue',pii_500_gj_1500(:,1),pii_500_gj_1500(:,4)./gj_pthread_mpich2_4(:,4),'green',pii_500_gj_1500(:,1),pii_500_gj_1500(:,4)./gj_pthread_mpich2_5(:,4),'cyan');
+xlabel('Number of equations');
+ylabel('Speedup');

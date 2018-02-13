@@ -1,0 +1,149 @@
+\documentclass [12pt]{report}
+\usepackage [dvips]{graphics}
+\usepackage{rotating}
+\usepackage [romanian]{babel}
+\usepackage {pictex}
+\usepackage{a4}
+\title{Implementare distribuita a rezolvarii sistemelor de ecuatii}
+\date{}
+\setlength{\textheight}{9in}
+\setlength{\textwidth}{6in}
+\setlength{\oddsidemargin}{0mm}
+\setlength{\evensidemargin}{0mm}
+\setlength{\marginparwidth}{0mm}
+\setlength{\marginparsep}{0mm}
+\begin{document}
+
+Realizarea retelei implica fazele:
+\begin{enumerate}
+\item Stabilirea legaturii intre procesul master si toate serverele.
+\item Transmiterea adreselor IP (anterioara si urmatoare) si porturilor.
+\item Realizarea conectarilor propriu-zise.
+\end{enumerate}
+
+Trimiterea adreselor:
+\begin{enumerate}
+\item Se citeste mesajul de la server (pentru a nu ramine in buffer), el 
+este folosit doar la sincronizare nu conteaza ce este in acel mesaj 
+deoarece este ignorat.
+\item Se transmite zero daca este primul server si unu pentru celelalte
+servere.
+\item Formez un vector cu doua pozitii in care memorez cele doua porturi.
+Pozitia zero este pentru serverul urmator iar pozitia unu este pentru
+serverul anterior. De remarcat ca acestea pornesc de la portul 55002, de
+fapt 55001 este adresa primului server si 55002 este adresa celui de-al
+doilea server, adresele sunt ale serverelor din interiorul serverelor
+(adresele de conectare in jos).
+\item Se transmite acest vector catre server.
+\item Se transmite adresa IP a serverului urmator.
+\item Se receptioneaza mesajul primit de la server.Se ignora (este un mesaj
+de sinconizare.
+\item Se seteaza vectorul {\it ready} la pozitia serverului.
+\item Scot din acest server din coada de read.
+\end{enumerate}
+
+Conectarea inelului:
+Pentru serverele diferite de zero:
+\begin{enumerate}
+\item Astept mesajul "START" daca acest mesaj nu este start mai astept un
+mesaj si apoi inchid socketul deoarece serverele dinaintea lui nu au pornit.
+\item Pornesc functia {\it conect\_sv\_dw} care realizeaza conectarea in jos
+(Adica porneste un server). 
+\item Dupa ce fac {\it listen} trimit catre clientul\_master un mesaj "ACK"
+care spune ca in pina aici totul a mers bine. Daca nu a mers bine se
+transmite catre procesul master codul de eroare si se asteapta mesajul de
+terminare a conexiunii.
+\item Procesul master asculta pentru toate serverele si daca unul sau mai
+multe nu trimit mesajul "ACK" ci trimit codurile de eroare trimite catre
+toate serverele un mesaj "EXIT" care va inchide inelul.
+\item Daca totul este bine se transmite un mesaj de pornire "START" catre
+toate serverele care receptionind acest mesaj vor realiza functia accept
+(blocanta).
+\item In final se transmite catre primul server mesajul de pornire "START"
+care incepe realizarea conexiunilor in inel.
+\end{enumerate}
+
+\pagebreak
+Trimiterea matricelor:
+
+\begin{enumerate}
+\item Se transmite numarul de variabile si numarul de linii care ii revim
+masinii.
+\item Se transmite matricea pe linii.
+\end{enumerate}
+
+Catre server trebuie trimise urmatoarele date in prima etapa: numarul de variabile
+(necunoscute) si numarul de linii pentru care se face prelucrarea (acest
+numar poate diferi de la o masina la alta in functie de cum se poate imparti
+numarul de variabile la numarul de servere pe care le avem la dispozitie) si
+bineinteles matricea care ii revine.
+
+Intr-o bucla conditionata de transmiterea tuturor datelor primei faze se
+executa:
+
+Pentru toate serverele se verifica daca a venit vreun mesaj pe coada de read
+si daca da se executa pentru serverul respectiv:
+\begin{enumerate}
+\item Citesc acest mesaj pentru a nu ramine in coada, el este ignorat.
+\item Transmit numarul de necunoscute (varibiabile) care este egal cu
+numarul de linii si coloane ale matricii.
+\item Transmit numarul de linii de prelucrat care ii revin serverului
+respectiv. Acest numar de obicei este diferit de la un server la altul
+deoarece de obicei nu se poate imparti corect matricea la numarul de servere
+pe care le avem.
+\item Transmit care masina este ultima ca ecuatii (care masina are ultima
+ecuatie din sistem, masina de la care se va porni back-substitution).
+\item Scot din coada de read serverul respectiv si setez variabila din {\it
+ready}.
+\end{enumerate}
+
+Din bucla while se iese in momentul in care toate serverele au primit datele
+ce ii revin testind ca suma valorilor din vectorul {\it ready} sa fie egala
+cu numarul de servere.
+
+Intr-o bucla conditionata de transmiterea tuturor liniile matricii se
+executa:
+
+Pentru toate serverele se verifica daca a venit vreun mesaj pe coada de read
+si daca da se executa pentru serverul respectiv:
+\begin{enumerate}
+\item Citesc acest mesaj pentru a nu ramine in coada, el este ignorat.
+\item Trimit liniile alocate serverului, una cite una cu ajutorul functiei
+{\it write} care nu este o functie blocanta si are avantajul ca poate
+trimite blocuri binare de date.
+\item Trimit vectorul de linii (un vector in care se spune fiecare linie
+care este in cadrul  matricii sistemului de ecuatii), se trimite tot cu
+functia {\it write} deoarece stie sa transmita un vector intreg de date
+float.
+\item Scot din coada de read serverul respectiv si setez variabila din {\it
+ready}.
+\end{enumerate}
+
+Din bucla while se iese in momentul in care toate serverele au primit liniile 
+ce ii revin testind ca suma valorilor din vectorul {\it ready} sa fie egala
+cu numarul de servere.
+
+\pagebreak
+Implementare eliminarii gauss:
+\begin{enumerate}
+\item Se receptioneaza numarul liniei.
+\item Se receptioneaza numarul hostului care transmite linia.
+\item Se receptioneaza linia intreaga.
+\item Daca hostul urmator nu este hostul care a trimis linia sau daca
+sistemul curent nu este cel care are ultima ecuatia si este la ultima
+ecuatie (pentru calcul), transmite mai departe linia.
+\item Se fac eliminarile pentru toate liniile ramase, nu numai pentru linia
+curenta.
+\item Daca mai sunt linii de receptionat pentru linia curenta (numarul linie
+pentru care se face calculul -1) se reia de la pasul 1.
+\item Se face calculul pentru linia curenta.
+\item Cu rezultatul obtinut de la pasul alterior se fac eliminarile si
+pentru liniile ramase deoarece nu se va mai primi acesta linie.
+\item Se trimite numarul liniei.
+\item Se trimite numarul hostului care transmite linia.
+\item Se trimite linia intreaga.
+\item Se reia de la pasul 1.
+\end{enumerate}
+
+
+\end{document}
