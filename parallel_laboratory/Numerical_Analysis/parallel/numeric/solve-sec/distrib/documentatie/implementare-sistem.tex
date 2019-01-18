@@ -1,0 +1,52 @@
+\chapter{Implementare rezolvarii sistemului}
+\section{Implementarea eliminarii Gauss}
+
+\hspace{5mm}Este realizata in fisierul {\it calcule\_server.h} in cadrul
+functiei {\bf gaussian\_elimination()} si este implementarea algoritmului de
+eliminare Gauss pipline cu maparea matricii in rinduri cu $p<n$ procesoare
+prezentat in sectiunea \ref{algoritm} dar care defapt este algoritmul
+cu implementare pe n procesoare prezentat in sectiunea \ref{implementare}.
+
+In versiunea in carea fost implementata am transmis toata linia in loc de o
+parte din linie deaorece mi s-a parut mai fezabil sa folosesc o singura
+instuctiune {\it write} care se stie ca este atomica decit mai multe
+instructiuni {\it write} astfel se evita efecte nedorite cind se lucreaza pe
+o singura masina (uniprocesor sau multiprocesor).
+
+Protocol de transmitere:
+\begin{enumerate}
+\item Se receptioneaza numarul liniei.
+\item Se receptioneaza numarul hostului care transmite linia.
+\item Se receptioneaza linia intreaga.
+\item Daca hostul urmator nu este hostul care a trimis linia sau daca
+sistemul curent nu este cel care are ultima ecuatia si este la ultima
+ecuatie (pentru calcul), transmite mai departe linia.
+\item Se fac eliminarile pentru toate liniile ramase, nu numai pentru linia
+curenta.
+\item Daca mai sunt linii de receptionat pentru linia curenta (numarul linie
+pentru care se face calculul -1) se reia de la pasul 1.
+\item Se face calculul pentru linia curenta.
+\item Cu rezultatul obtinut de la pasul alterior se fac eliminarile si
+pentru liniile ramase deoarece nu se va mai primi acesta linie.
+\item Se trimite numarul liniei.
+\item Se trimite numarul hostului care transmite linia.
+\item Se trimite linia intreaga.
+\item Se reia de la pasul 1.
+\end{enumerate}
+
+Implementarea acestui protocol este prezentat in sectiunea
+\ref{eliminare-imp}.
+
+\section{Implementarea substitutiei {\bf back-substitution}}
+
+\hspace{5mm}Dupa eliminarea gaussiana presentata in sectiunea anterioara
+matricea plina a sistemului devine o matrice triunghiular superioara cu
+elementele de pe diagonala principala unu, care se rezolva cu algoritmul
+{\bf back-substitution} prezentat in sectiunea \ref{substitutie}.
+
+Dintre toate versiunile de back-substitution in acest proiect a fost
+implementata versiunea secventiala deoarece versiunea de implementare
+pipeline cu mapare pe rinduri ciclice nu a functionat la data prezentarii
+lucrarii.
+
+Implementarea protocolului este prezentat in sectiunea \ref{substitutie-imp}

@@ -1,0 +1,228 @@
+\section{comunicatii\_server.h}
+\subsection{Realizarea inelului in server}
+\label{realizare-inel}
+\hspace{5mm}/*
+
+\hspace{5mm}hederul\ pentru\ comunicatii\ server\ 
+
+*/
+
+//pornire\ server\ pentru\ conexiunea\ din\ jos
+
+int\ conect\_sv\_dw()
+
+\{
+
+\hspace{5mm}//creare\ socket
+
+\hspace{5mm}if((listen\_socket\_dw=socket(AF\_INET,SOCK\_STREAM,0))$<$0)
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}perror("socket");
+
+\hspace{5mm}\hspace{5mm}peroare=strerror(listen\_socket\_dw);
+
+\hspace{5mm}\hspace{5mm}return\ 1;
+
+\hspace{5mm}\}
+
+\hspace{5mm}memset((char\ *)\&server\_addr\_dw,0,sizeof(server\_addr\_dw));
+
+\hspace{5mm}server\_addr\_dw.sin\_family=AF\_INET;
+
+\hspace{5mm}server\_addr\_dw.sin\_port=htons(porturi[1]);
+
+\hspace{5mm}server\_addr\_dw.sin\_addr.s\_addr=htonl(INADDR\_ANY);
+
+\hspace{5mm}//legare\ (bind)
+
+\hspace{5mm}if((error=bind(listen\_socket\_dw,(struct\ sockaddr\ *)\&server\_addr\_dw,sizeof(server\_addr\_dw)))$<$0)
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}perror("bind");
+
+\hspace{5mm}\hspace{5mm}peroare=strerror(error);
+
+\hspace{5mm}\hspace{5mm}close(listen\_socket\_dw);
+
+\hspace{5mm}\hspace{5mm}return\ 1;
+
+\hspace{5mm}\}
+
+\hspace{5mm}if((error=listen(listen\_socket\_dw,5))$<$0)
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}perror("listen");
+
+\hspace{5mm}\hspace{5mm}peroare=strerror(error);
+
+\hspace{5mm}\hspace{5mm}close(listen\_socket\_dw);
+
+\hspace{5mm}\hspace{5mm}return\ 1;
+
+\hspace{5mm}\}
+
+\hspace{5mm}client\_len\_dw=sizeof(client\_addr\_dw);
+
+\hspace{5mm}if(primul!='0')
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}peroare=mesaj\_ack;
+
+\hspace{5mm}\hspace{5mm}send(server\_socket,peroare,strlen(peroare),0);
+
+\hspace{5mm}\hspace{5mm}//astept\ confirmare\ pornire\ toate\ servere
+
+\hspace{5mm}\hspace{5mm}memset((char\ *)\&buffer,0,sizeof(buffer));
+
+\hspace{5mm}\hspace{5mm}recv(server\_socket,buffer,SIZE,0);
+
+\hspace{5mm}\hspace{5mm}if(strcmp(buffer,"START")$<$0)
+
+\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}close(listen\_socket\_dw);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}return\ 2;
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\}
+
+\hspace{5mm}//acceptare\ conexiune
+
+\hspace{5mm}if((server\_socket\_dw=accept(listen\_socket\_dw,(struct\ sockaddr\ *)\&client\_addr\_dw,\&client\_len\_dw))$<$0)
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}perror("accept");
+
+\hspace{5mm}\hspace{5mm}peroare=strerror(server\_socket\_dw);
+
+\hspace{5mm}\hspace{5mm}close(listen\_socket\_dw);
+
+\hspace{5mm}\hspace{5mm}if(primul=='0')\ return\ 1;
+
+\hspace{5mm}\hspace{5mm}return\ 2;
+
+\hspace{5mm}\}
+
+\hspace{5mm}return\ 0;
+
+\}
+
+//conectare\ in\ sus
+
+int\ conect\_sv\_up()
+
+\{
+
+int\ i;
+
+\hspace{5mm}i=0;
+
+\hspace{5mm}while(i$<$5)
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}server\_addr\_up.sin\_family=AF\_INET;
+
+\hspace{5mm}\hspace{5mm}server\_addr\_up.sin\_port=htons(porturi[0]);
+
+\hspace{5mm}\hspace{5mm}server\_addr\_up.sin\_addr.s\_addr=inet\_addr(adresa);
+
+\hspace{5mm}\hspace{5mm}//creare\ socket
+
+\hspace{5mm}\hspace{5mm}if((client\_socket\_up=socket(AF\_INET,SOCK\_STREAM,0))$<$0)
+
+\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}perror("socket");
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}peroare=strerror(client\_socket\_up);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}return\ 1;
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}//conectare
+
+\hspace{5mm}\hspace{5mm}if((error=connect(client\_socket\_up,(struct\ sockaddr\ *)\&server\_addr\_up,sizeof(server\_addr\_up)))$<$0)
+
+\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}perror("connect");
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}peroare=strerror(error);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}close(client\_socket\_up);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}i++;
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}else\ break;
+
+\hspace{5mm}\hspace{5mm}sleep(1);
+
+\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}if(i==5)
+
+\hspace{5mm}\hspace{5mm}\{
+
+
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}return\ 1;
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}peroare=mesaj\_ack;
+
+\hspace{5mm}return\ 0;
+
+\}
+
+\subsection{Deconectarea inelului in server}
+\label{deconectare-inel}
+\hspace{5mm}/*
+
+\hspace{5mm}Functia\ pentru\ deconectare\ in\ sus
+
+*/
+
+void\ deconectez\_up()
+
+\{
+
+\hspace{5mm}send(client\_socket\_up,mesaj\_exit,strlen(mesaj\_exit),0);
+
+\hspace{5mm}recv(client\_socket\_up,buffer,strlen(mesaj\_exit),0);
+
+\hspace{5mm}close(client\_socket\_up);
+
+\}
+
+/*
+
+\hspace{5mm}Functia\ pentru\ deconectare\ in\ jos
+
+*/
+
+void\ deconectez\_dw()
+
+\{
+
+\hspace{5mm}recv(server\_socket\_dw,buffer,strlen(mesaj\_exit),0);
+
+\hspace{5mm}send(server\_socket\_dw,mesaj\_exit,strlen(mesaj\_exit),0);
+
+\hspace{5mm}close(server\_socket\_dw);
+
+\hspace{5mm}close(listen\_socket\_dw);
+
+\}ÿ

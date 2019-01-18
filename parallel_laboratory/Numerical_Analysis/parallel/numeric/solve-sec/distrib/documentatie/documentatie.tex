@@ -1,0 +1,30 @@
+\documentclass [12pt]{report}
+\usepackage [dvips]{graphics}
+\usepackage{rotating}
+\usepackage [romanian]{babel}
+\usepackage {pictex}
+\usepackage{a4}
+\title{Implementare distribuita a rezolvarii sistemelor de ecuatii}
+\author{Dimitriu Gabriel ISC}
+\date{}
+\setlength{\textheight}{9in}
+\setlength{\textwidth}{6in}
+\setlength{\oddsidemargin}{0mm}
+\setlength{\evensidemargin}{0mm}
+\setlength{\marginparwidth}{0mm}
+\setlength{\marginparsep}{0mm}
+\begin{document}
+\maketitle
+\tableofcontents
+\input{mapare.tex}
+\input{rezolvare-sistem.tex}
+\chapter{Implementarea comunicatiei}
+\input{creare-retea.tex}
+\input{implementare-sistem.tex}
+\input{utilizare.tex}
+\chapter{ANEXA}
+\input{comunicatii_server.tex}
+\input{comunicatii_client.tex}
+\input{calcule_server.tex}
+\input{bibliografie.tex}
+\end{document}

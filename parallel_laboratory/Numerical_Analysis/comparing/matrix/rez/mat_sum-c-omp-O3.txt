@@ -1,0 +1,10 @@
+time petrecut 0.094397s 
+time petrecut 0.114917s 
+time petrecut 0.115133s 
+time petrecut 0.114791s 
+time petrecut 0.115132s 
+time petrecut 0.115171s 
+time petrecut 0.114965s 
+time petrecut 0.114743s 
+time petrecut 0.115172s 
+time petrecut 0.115338s 

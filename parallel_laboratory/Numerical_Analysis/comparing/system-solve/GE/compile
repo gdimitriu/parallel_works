@@ -1,0 +1,2 @@
+#!/bin/sh
+f90 $1 -o $2 -Vaxlib -wp_ipo -tpp6 -O3

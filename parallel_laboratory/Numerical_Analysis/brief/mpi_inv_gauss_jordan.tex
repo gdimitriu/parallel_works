@@ -1,0 +1,156 @@
+
+\documentclass[a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%TCIDATA{OutputFilter=LATEX.DLL}
+%TCIDATA{Version=5.00.0.2552}
+%TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
+%TCIDATA{Created=Wednesday, August 24, 2005 17:13:14}
+%TCIDATA{LastRevised=Sunday, November 06, 2005 11:40:48}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+%TCIDATA{<META NAME="DocumentShell" CONTENT="Standard LaTeX\Blank - Standard LaTeX Article">}
+%TCIDATA{Language=American English}
+%TCIDATA{CSTFile=40 LaTeX article.cst}
+
+\setlength{\textheight}{8in}
+\setlength{\textwidth}{6in}
+\setlength{\oddsidemargin}{0mm}
+\setlength{\evensidemargin}{0mm}
+\setlength{\marginparwidth}{0mm}
+\setlength{\marginparsep}{0mm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.} }{\ \rule{0.5em}{0.5em}}
+\input{tcilatex}
+
+\begin{document}
+
+\title{MPI implementation of inverse with Gauss Jordan}
+\date{}
+\author{Gabriel Dimitriu}
+\maketitle
+
+\section{\protect\bigskip Introduction}
+
+\bigskip Let be $A$ an inversable matrix and his inverse is $A^{-1}$, then
+the inverse have the following proprety $A\ast A^{-1}=I$, where $I$ is the
+unity matrix.
+
+Through a series of algebraic manipulations, matrix is reduced to a unity
+matrix and making the same operations for an attached unity matrix. The
+former unity matrix will be the inverse.
+
+\begin{algorithm}
+Inverse with Gauss Jordan
+\end{algorithm}
+
+\begin{enumerate}
+\item procedure inv\_gj(mat,inv)
+
+\item begin
+
+\item \qquad for k:=0 to n-1 do
+
+\item \qquad \qquad for i:=0 to n-1 do
+
+\item \qquad \qquad \qquad if(k\TEXTsymbol{<}\TEXTsymbol{>}i) then do
+
+\item \qquad \qquad \qquad \qquad for j:=k+1 to n-1 do
+
+\item \qquad \qquad \qquad \qquad \qquad
+mat[i][j]-=mat[i][k]/mat[k][k]*mat[k][j];
+
+\item \qquad \qquad \qquad \qquad for j:=0 to n-1 do
+
+\item \qquad \qquad \qquad \qquad \qquad
+inv[i][j]-=mat[i][k]/mat[k][k]*inv[k][j];
+
+\item \qquad \qquad \qquad else
+
+\item \qquad \qquad \qquad \qquad for j:=0 to n-1 do
+
+\item \qquad \qquad \qquad \qquad \qquad inv[i][j]=inv[i][j]/mat[i][i];
+
+\item \qquad \qquad \qquad \qquad \qquad if j\TEXTsymbol{<}\TEXTsymbol{>}i
+then do
+
+\item \qquad \qquad \qquad \qquad \qquad \qquad
+mat[i][j]=mat[i][j]/mat[i][i];
+
+\item \qquad \qquad \qquad \qquad endfor;
+
+\item \qquad \qquad \qquad \qquad mat[i][i]=1.0;
+
+\item \qquad \qquad \qquad endif;
+
+\item \qquad \qquad endfor;\qquad 
+
+\item \qquad endfor;
+
+\item end inv\_gj;
+\end{enumerate}
+
+\section{Pipeline communication and Computation}
+
+\bigskip The matrix is scattered to all processor so two consecutive row are
+in two consecutive processors.
+
+During the $k^{th}$ iteration processor $P_{k}$ broadcast the $k^{th}$ rows
+of both matrix to processors all processors. Assume that the processors $%
+P_{0}...P_{p-1}$ are connected in a linear array, and $P_{k+1}$ is the first
+processor to receive the $k^{th}$ rows from processor $P_{k}$. Then the
+processor $P_{k+1}$ must forward this data to $P_{k+2}$. However, after
+forwarding the $k^{th}$ rows to $P_{k+2}$, processor $P_{k+1}$ need not wait
+to perform the for with i variable for it's part of matrix until all the
+processors up to $P_{p-1}$ have received the $k^{th}\,$\ rows. Similarly, $%
+P_{k+2}$ can start its computation as soon as is has forwarded the $k^{th}$
+rows to $P_{k+3}$, and so on. Meanwhile, after completing the computation
+for the $k^{th}$ iteration, $P_{k+1}$ start the broadcast of the $(k+1)^{th}$
+rows by sending it to $P_{k+2}$. All processors receive p-1 rows before
+sending their rows to other processors.
+
+\section{\protect\bigskip Results}
+
+The benchmark is made on a 100MBs network with Fedora Core 1 and realteck
+8139 network card. The MPI version is MPICH\ 1.2.6 with native gcc and rsh
+authorization.
+
+The network consists in 1 PII-500MHz, 2 PIII-800MHz, 1 athlon-1200MHz, 1
+PIV-1400MHz and 1 dual PII-500MHz and the speedup is the average of ten runs.
+
+The Inverse with Gauss Jordan is implemented without load balancing so
+because the fist and in the same time the slowest computer is PII-500MHz so
+the reference of the speedup is this computer.
+
+In the following graph is presented the speedup with red for two computers,
+blue for three computers, green for four computers, cyan for five computers,
+magenta for six computers and black for seven computers.
+
+\begin{center}
+\FRAME{itbpF}{4.3412in}{3.2619in}{0in}{}{}{Figure}{\special{language
+"Scientific Word";type "GRAPHIC";maintain-aspect-ratio TRUE;display
+"USEDEF";valid_file "T";width 4.3412in;height 3.2619in;depth
+0in;original-width 5.3756in;original-height 4.0315in;cropleft "0";croptop
+"1";cropright "1";cropbottom "0";tempfilename
+'mpi_inv_gj_1500.bmp';tempfile-properties "XNPR";}}
+\end{center}
+
+\end{document}

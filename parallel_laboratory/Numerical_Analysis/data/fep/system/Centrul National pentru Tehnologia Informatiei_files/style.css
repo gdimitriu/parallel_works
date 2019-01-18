@@ -1,0 +1,60 @@
+TD.tdText {
+	BACKGROUND: #ffffff; VERTICAL-ALIGN: top; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-ALIGN: left
+}
+TD.tdAlegereLiteraActiva {
+	BACKGROUND: white; VERTICAL-ALIGN: top; COLOR: black; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-ALIGN: center
+}
+TD.tdAlegereLiteraInactiva {
+	BACKGROUND: white; VERTICAL-ALIGN: top; COLOR: silver; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-ALIGN: center
+}
+TD.tdTextBg {
+	BACKGROUND: #ffeeee; VERTICAL-ALIGN: top; COLOR: #000000; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-ALIGN: left
+}
+TD.tdColor {
+	BACKGROUND: #666699; VERTICAL-ALIGN: top; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-ALIGN: left
+}
+TD.tdColor1 {
+	BACKGROUND: #ffdd00; VERTICAL-ALIGN: top; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-ALIGN: left
+}
+TD.tdColor2 {
+	BACKGROUND: #993366; VERTICAL-ALIGN: top; COLOR: #ffffff; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-ALIGN: left
+}
+TD.tdColor3 {
+	BACKGROUND: #662244; VERTICAL-ALIGN: top; COLOR: #ffffff; FONT-FAMILY: Verdana, Arial, Helvetica, sans-serif; TEXT-ALIGN: left
+}
+TABLE.patrat0 {
+	BORDER-RIGHT: 0px; BORDER-TOP: 0px; VERTICAL-ALIGN: top; BORDER-LEFT: 0px; WIDTH: 100%; BORDER-BOTTOM: 0px
+}
+TABLE.patrat {
+	BORDER-RIGHT: 1px; BORDER-TOP: 1px; BACKGROUND: #666699; VERTICAL-ALIGN: top; BORDER-LEFT: 1px; WIDTH: 100%; BORDER-BOTTOM: 1px; TEXT-ALIGN: left
+}
+TABLE.patrat1 {
+	BORDER-RIGHT: 1px; BORDER-TOP: 1px; BACKGROUND: #ffdd00; VERTICAL-ALIGN: top; BORDER-LEFT: 1px; WIDTH: 100%; BORDER-BOTTOM: 1px; TEXT-ALIGN: left
+}
+TABLE.patrat2 {
+	BORDER-RIGHT: 1px; BORDER-TOP: 1px; BACKGROUND: #993366; VERTICAL-ALIGN: top; BORDER-LEFT: 1px; WIDTH: 100%; COLOR: #ffffff; BORDER-BOTTOM: 1px; TEXT-ALIGN: left
+}
+TABLE.alegereLitere {
+	BORDER-RIGHT: 1px; BORDER-TOP: 1px; BACKGROUND: #993366; VERTICAL-ALIGN: top; BORDER-LEFT: 1px; WIDTH: 100%; COLOR: #ffffff; BORDER-BOTTOM: 1px; TEXT-ALIGN: left
+}
+TABLE.patrat3 {
+	BORDER-RIGHT: 1px; BORDER-TOP: 1px; BACKGROUND: #662244; VERTICAL-ALIGN: top; BORDER-LEFT: 1px; WIDTH: 100%; COLOR: #ffffff; BORDER-BOTTOM: 1px; TEXT-ALIGN: left
+}
+A {
+	
+}
+A:link {
+	COLOR: #773333; TEXT-DECORATION: none
+}
+A:hover {
+	COLOR: #773333; TEXT-DECORATION: underline
+}
+A:active {
+	COLOR: #773333; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #773333; TEXT-DECORATION: none
+}
+A:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}

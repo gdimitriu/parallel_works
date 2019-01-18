@@ -1,0 +1,177 @@
+
+\documentclass[a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+
+\setcounter{MaxMatrixCols}{10}
+%TCIDATA{OutputFilter=LATEX.DLL}
+%TCIDATA{Version=5.00.0.2552}
+%TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
+%TCIDATA{Created=Wednesday, September 07, 2005 13:11:35}
+%TCIDATA{LastRevised=Sunday, September 11, 2005 10:24:54}
+%TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
+%TCIDATA{<META NAME="DocumentShell" CONTENT="Standard LaTeX\Blank - Standard LaTeX Article">}
+%TCIDATA{Language=American English}
+%TCIDATA{CSTFile=40 LaTeX article.cst}
+
+\setlength{\textheight}{8in}
+\setlength{\textwidth}{6in}
+\setlength{\oddsidemargin}{0mm}
+\setlength{\evensidemargin}{0mm}
+\setlength{\marginparwidth}{0mm}
+\setlength{\marginparsep}{0mm}
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.} }{\ \rule{0.5em}{0.5em}}
+\input{tcilatex}
+
+\begin{document}
+
+\title{OpenMP Implementation of Jacobi with Dominant Collumn}
+\date{}
+\author{Gabriel Dimitriu}
+\maketitle
+
+\section{\protect\bigskip Introduction}
+
+Let 
+\begin{equation}
+Ax=a  \label{s1}
+\end{equation}%
+be our system of linear equations, with $A=(a_{ij})_{i,j\in \{1,...,m\}}$, $%
+a=(a_{1},...,a_{m})$ and $x=(x_{1},...,x_{m})^{T}$.
+
+Suppose $a_{jj}\neq 0$ and $a_{ii}>\sum_{i=1}^{m}a_{ij}$ for any $i\in
+\{1,...,m\}$ then we can note $D=%
+\begin{pmatrix}
+a_{11} & 0 \\ 
+0 & a_{mm}%
+\end{pmatrix}%
+$ and $D^{-1}=%
+\begin{pmatrix}
+1/a_{11} & 0 \\ 
+0 & 1/a_{mm}%
+\end{pmatrix}%
+$.
+
+The system (\ref{s1}) could be transform in $AD^{-1}Dx=a$ or%
+\begin{equation*}
+\left( I-\underset{C}{\left( I-\underbrace{AD^{-1}}\right) }\right) Dx=a
+\end{equation*}
+
+which is equivalent with%
+\begin{equation}
+(I-C)Dx=a  \label{s2}
+\end{equation}
+
+Let consider the following system
+
+\begin{equation}
+(I-C)y=a  \label{s3}
+\end{equation}
+
+\begin{theorem}
+If $a_{jj}\neq 0$ and $a_{ii}>\sum_{i=1}^{m}a_{ij}$ for any $i\in
+\{1,...,m\} $ the w exist and is unique so $(I-C)w=a$ and the Jacobi method
+is convergent for the system (\ref{s3}) and the evaluation error for the
+original system is%
+\begin{equation*}
+\left\Vert x^{(n)}-z\right\Vert _{1}=\left\Vert D^{-1}(y^{(n)}-w\right\Vert
+_{1}\leq \frac{1}{\min_{1\leq j\leq m}\left\vert a_{jj}\right\vert }\frac{q}{%
+1-q}\left\Vert y^{(n)}-y^{(n-1)}\right\Vert _{1}
+\end{equation*}
+\end{theorem}
+
+Where: $\left\Vert x\right\Vert _{1}=\sum_{i=1}^{m}\left\vert
+x_{i}\right\vert $ and $q=\left\Vert C\right\Vert _{1}=\max_{1\leq j\leq
+m}\sum_{i=1,i\neq j}^{m}\left\vert \frac{a_{ij}}{a_{jj}}\right\vert <1$.
+
+\section{Implementation of generator in C}
+
+Where \ in conformity with system (\ref{s1}) we have: mat is \ matrix $A$ of
+coefficients,y is the free vector $a,$x is the solution $x$ of the
+system,rez is the correct solution.
+
+Because I want to have a random solution but also to can verified the
+solution and the system to be compatible with systems solved by Jacobi with
+dominant column I use the following generator which will assure me that I
+have the following solution rez=(1,2,...,m) for a m dimensional problem.
+
+{\small \qquad for(i=0;i\TEXTsymbol{<}dim;i++) rez[i]=(double)i+1;}
+
+{\small \qquad for(i=0;i\TEXTsymbol{<}dim;i++)}
+
+{\small \qquad \qquad for(j=0;j\TEXTsymbol{<}dim;j++) if(i!=j) \{}
+
+{\small \qquad \qquad \qquad \qquad mat[i][j]=20000*rand()/(double)RAND\_MAX;%
+}
+
+{\small \qquad \qquad \qquad \qquad if((rand()/(double)RAND\_MAX)\TEXTsymbol{%
+<}0.5) mat[i][j]=-mat[i][j]; \}}
+
+{\small \qquad for(i=0;i\TEXTsymbol{<}dim;i++) \{}
+
+{\small \qquad \qquad temp=0.0;}
+
+{\small \qquad \qquad for(j=0;j\TEXTsymbol{<}dim;j++) if(j!=i)
+temp+=fabs(mat[j][i]);}
+
+{\small \qquad \qquad
+mat[i][i]=temp+(20000+temp)*rand()/(double)RAND\_MAX+0.00001;}
+
+{\small \qquad \qquad if((rand()/(double)RAND\_MAX)\TEXTsymbol{<}0.5)
+mat[i][i]=-mat[i][i]; \}}
+
+{\small \qquad //generate the free term}
+
+{\small \qquad for(i=0;i\TEXTsymbol{<}dim;i++) \{}
+
+{\small \qquad \qquad y[i]=0.0; x[i]=0.0;}
+
+{\small \qquad \qquad for(j=0;j\TEXTsymbol{<}dim;j++)
+y[i]+=mat[i][j]*rez[j]; \}}
+
+\section{Results}
+
+I have compile the Jacobi with dominant column without load balance with two
+OpenMP compilers: Omni 1.6 and Intel C Compiler 8.0 for LINUX and the serial
+with gcc and Intel C Compiler 8.0 for LINUX both with maximum optimization
+"-O3" and for Intel C Compiler I've put also "-mcpu=pentiumpro -tpp6" for
+maximum optimization.
+
+The executable were run on a dual pentium II at 500MHz with 256MB RAM and
+with LINUX\ Fedora Core 1.
+
+The following results were made for a average or 10 runs for serial and
+parallel programs and with blue is plotted the results from Omni and with
+red the results from ICC.
+
+\begin{center}
+\FRAME{itbpF}{4.7912in}{3.599in}{0in}{}{}{Figure}{\special{language
+"Scientific Word";type "GRAPHIC";maintain-aspect-ratio TRUE;display
+"USEDEF";valid_file "T";width 4.7912in;height 3.599in;depth
+0in;original-width 5.3756in;original-height 4.0315in;cropleft "0";croptop
+"1";cropright "1";cropbottom "0";tempfilename
+'full_openmp_jacobi_col_2500.bmp';tempfile-properties "XNPR";}}
+\end{center}
+
+\end{document}

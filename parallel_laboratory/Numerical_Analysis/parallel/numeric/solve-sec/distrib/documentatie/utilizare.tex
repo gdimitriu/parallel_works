@@ -1,0 +1,86 @@
+\chapter{Instructiuni de utilizare}
+\section{Configurarea retelei}
+
+\hspace{5mm}Serverele pe sistemele host se pornesc cu comanda:
+
+$$gaussd\; <port>$$
+
+Daca este specificat portul se porneste standard pe 50000.
+
+De remarcat ca se pot porni mai multe servere pe accesi masina, bineinteles
+cu porturi diferite.
+
+Se editeaza fisierul {\it gauss.conf} care contine adresele de IP si
+porturile serverelor care sunt valide. Serverele se definesc ca IP:port.
+
+De exemplu:
+
+\input{gauss.conf}
+
+\section{Introducerea sistemului de ecuatii}
+
+\hspace{5mm} Dupa lansare in executie a programului gauss si dupa ce inelul a
+fost stabilit se poate introduce numele fisierului care contine sistemul de
+ecuatii.
+
+Sistemul de ecuatii este descis in forma citibila de om, adica forma
+matematica de descriere a unui sistem de ecuatii($aX1+bX2=c$).
+
+{\bf Observatie:} Daca un coeficient este zero se introduce acest coeficient
+zero nu se exclude variabila.
+
+Un exemplu de sistem de ecuatii pe care s-au facut testele  de corectitudine
+a calculelor este:
+
+\pagebreak
+
+\input{test3.dat}
+
+Se observa ca este un sistem cu 11 necunoscute care are solutiile:
+$$\begin{array}{c}
+X_1=1\\
+X_2=2\\
+X_3=3\\
+X_4=1\\
+X_5=2\\
+X_6=2\\
+X_7=1\\
+X_8=1\\
+X_9=1\\
+X_{10}=2\\
+X_{11}=1\\
+\end{array}$$
+
+\section{Concluzii}
+
+\hspace{5mm}Sistemul a fost testat pentru un numar relativ mic de ecuatii
+(30 de necunoscute) rulind pe trei sisteme (2 + clientul-1server) in 1.70
+secunde, cele trei sisteme au fost: doua pentiumuri la 233 si un pentium la
+100. Algoritmul secvential a fost testat pe un pentium la 120 si a rulat
+sub 1 secunda. Deci putem spune ca nu avem accelerare si o decelerare pentru 
+ecuatii cu un numar mic de necunoscute din cauza transmiterii liniilor pe o 
+retea LAN lenta. 
+
+Daca se doreste accelerare ar trebui sa avem un sistem care are o retea 
+interna de mare viteza, astfel incit timpul de transmisie prin retea sa fie 
+destul de mic in camparatie cu calculele care se fac. Sau sa avem un sistem 
+de ecuatii foarte mare (pe o singura masina s-a verificat un sistem de ecuatii
+ cu 100 de necunoscute rulind (pentiun 120) in aproximativ 11 de secunde, pe 
+cind pe acelasi calculator, acealasi sistem de ecuatii a fost rulat in 3.75 secunde 
+cu algoritmul secvential deci se poate observa o incetinire de 3 ori. Emularea
+ a fost facuta cu trei servere.
+
+Algoritmul este posibil sa aiba accelerare si pe sisteme distribuite daca
+sistemul est foarte mare, astfel incit un singur sistem sa trebuiasca sa
+iasa pe swap, iar in cazul implentarii distribuite nici un sistem sa nu iasa
+pe swap. Dar aici se pune acceasi problema a transmiterii de linii prin retea
+care bineinteles creste si ea. In acest fel este posibil sa nu avem
+accelerare de asemenea. Pe sisteme distribuite este posibil sa nu se poata
+realiza acest algoritm deoarece este nesara schimbul de linii prin retea cu
+confirmari. Daca se gaseste o solutie in care sa nu fie necesara
+"confirmarea" din partea receptorului si sa avem o retea rapida este posibil
+sa avem accelerare.
+
+De remarcat ca daca se face schimbarea pivotului in intreaga retea,
+realizind o cautare paralela si pipeline am putea avea din accelerare
+pozitiva (in cel mai bun caz) sau unitara.
