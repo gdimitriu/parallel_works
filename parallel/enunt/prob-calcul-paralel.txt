@@ -1,0 +1,6 @@
+	Probleme calcul parallel arhitecturi si limbaje (CP)
+
+1)Sa se scrie un program care realizeaza inmultirea de matrici patratice cu 
+procese. Se da biblioteca de citire a matricilor din fisier si cea de contorizare
+a timpului de executie. Ele au numele de CP_01_1.c si CP_01_2.c. Generatorul
+de fisiere este CP_01_3.c.

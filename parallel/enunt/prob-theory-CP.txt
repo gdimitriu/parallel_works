@@ -1,0 +1,148 @@
+		Probleme Teorie Calcul Paralel
+
+1)
+a)Fe urmatorul program: void main(){printf("mesaj1\n");fork()printf("mesaj2\n");fork();
+printf("mesaj3\n");while(wait(0)!=-1);}
+Considerind ca la prima executie pid-ul procesului parinte este 642 si ca
+procesele nou create li se atribuie pid-uri cu calori succesive in ordine
+crescatoare, reprezentati arborele tuturor proceselor si explicati fiecare
+etapa de executie a programului. Etichetati fiecare nod al arborelui
+inscriind pid-ul acestuia. Idicati mesaje car ese afiseaza la consola la
+executia programului. Este posibil sa apara o linie "mesaj3" inaintea unei
+linii "mesaj2"? Dar o linie "mesaj2" inaintea unei linii "mesaj1" ?Explicati
+fiecare caz, tinind seama de starile proceselor.
+b)Fie uramtorul program secvential de inmultire a unei matrice a de
+dimensiune nxn cu o constanta c:
+for(i=0;i<n;i++) for(j=0;j<n;j++) b[i][j]=c*a[i][j]; calculati timpul de
+executie secventiala a programului. Definiti in pseudocod si explicati un
+algoritm de executie paralella intr-un calculator CREW-PRAM cu p<n
+procesoare (n divizibil cu p). Definiti si calculati: timpul de executie
+paralela, accelerarea, eficienta, costul si costul suplimentar de executie
+paralelal. Pentru fiecare indicator de performanta precizati limita
+asimptotica superioara.
+c)Scrieti programele pentru 3 procese,un proces "parinte", un proces "fiu"
+si un proces "nepot". Procesul "parinte" parcurge o bucla de 3 iteratii si
+la fiecare iteratie creeaza un proces fiu. Procesele fii create in
+iteratiile pare executa programul "fiu", iar cele create in interatiile
+impare nu schimba imaginea procesului. In programul "fiu" se afiseaza la
+consola un mesaj care contine sirul "fiu" urmat de pid-ul si ppid-ul propriu
+si apoi creaza un nou proces care va executa codul "nepot". In programul
+"nepot" se afiseaza la consola un mesaj care contine sirul "nepot" urmat de
+pid-ul si ppid-ul propriu. Considerind ca la prima executie pid-ul
+procesului parinte este 521, reprezentati arborele tuturor proceselor,
+etichetind fiecare nor cu pid-ul acestuia. Indicati mesajele care afiseaza
+la consola la executia programului. Care vor fi mesajele afisate si
+etichetele nodurilor arborelui la cea de-a doua executie a programului ?
+2)
+a) Fie functiile f1=5x+2 si f2=x*logx+4. Sa se calculeze limita asimptotica
+superioara a functiei f(x)=f1(1)+f2(x).
+b)Fie operatia de incrementare x=x+1 a unei variabile partajate de cate doua
+procese (sau thread-uri). Scrieti programul astfel incit, dupa executie
+variabila sa aiba valoarea corenta, incrementata cu 2 unitati.
+c)Fie urmatoarele procese cu fisierele executabile "fiu", "parinte", aflate
+in acelasi director:
+void main() //Proces "parinte"
+{
+ int i;pid_t pid; char argnum[4];
+ for(i=0;i<4;i++)
+ {
+  pid=fork();
+  if(pid==0){ itoa(i,argum,10);execlp("fiu","fiu",argum,(char *)0);
+ }
+}
+void main(int argc,char **argv)//Proces fiu
+{
+ printf("Indice: %s,pid:%d ppid:%d\n",argv[1],getpid(),getppid());
+}
+Indicati arborele proceselor create si mesajele care se afiseaza la consola
+intr-o executie oarecare.
+d)Fie secventa de cod: for(i=0;i<n;i++){x[i+n]=x[i]+4;} Sa se analizeze
+dependenta de date in acest algoritm. Sa se calculeze limita asimptotica
+superioara a timpului de executie secventiala a algoritmului dat.
+e)Scrieti pseudocodul de executie paralela intr-un calculator PRAM CREW cu p
+procesoare a algoritmului de la punctul precedent si explicati modul de
+executie (distribuirea si partajarea datelor). Calculati timpul de executie
+paralela, accelerarea si eficienta de calcul. Pentru fiecare din acesti
+parametri sa se calculeze limita asimptotica superioara.
+f)Scrieti programul de executie paralela a algoritmului de la punctul d)
+folosind thread-uri.
+g)Fie inhipercub 5-dimensional. Sa se indice traseul unui mesaj de la nodul
+A=01111 la nodul B=11000 in rutarea ordonata dupa dimensiuni.
+3)
+a)Fie functiile f1=5x4+2x+1 si f2=(logx)4-4. Sa se calculeze limita
+simptotica superioara a fucntiei: f(x)=f1(x)+f2(x).
+b)Se da urmatorul program:
+void main()//proces parinte
+{
+	int i;pid_t pid;char argnum[4];
+	for(i=0;i<4;i++)
+	{
+		itoa(i,argnum,10);pid=fork();
+		if(pid==0)
+		{
+			if(i%2==0) execlp("fiu1","fiu1",argnum,(char *)0);
+			else execlp("fiu2","fiu2",argnum,(char *)0);
+		}
+	}
+}
+
+void main(int argc,char **argv)//proces "fiu1"
+{
+	printf("Fiu 1,i=%s,pid:%d,ppid:%d\n",argv[1],getpid();getppid());
+}
+
+void main(int argc,char **argv)//proces "fiu2"
+{
+	printf("Fiu 2,i=%s,pid:%d,ppid:%d\n",argv[1],getpid();getppid());
+}
+Indicati arborele proceselor create si emsajele care se afiseaza la consola
+intr-o executie oarecare.
+c)Se da o retea statica de interconcetare cu n=16 noduri.Calculati costul
+retelei (nr de linkuri) pentru topologiile: tor,bidimensional,stea,
+hipercub.
+d)Fie secventa de cod: for(i=0;i<n;i++){y[i]=x[i+4]+5;} Sa se analizeze
+dependenta de date in acest algoritm. Sa se calculeze limita asimptotica
+superioara a timpului de executie secventiala a algoritmului dat.
+e)Scrieti pseudocodul de executie paralela intr-un calculator PRAM CREW cu p
+procesoare a lagoritmului de pa pucntul precedent si explicati modul de
+executie (distribuirea si partajarea datelor). Calcualti timpul de executie
+paralela, accelerarea si eficienta de calcul. Pentru fiecare din acesti
+parametri sa se calculeze limita asimptotica superioara.
+f) Scrieti programul de executie paralela a algoritmului de la punctul d)
+folosind thread-uri.
+g)Se da o retea grila bidimensionala cu 64 noduri. Sa se indice traseul unui
+mesaj de la nodul (0,2) la nodul (3,4) in rutarea oronata dupa dimensiuni
+(rutare XY).
+4)
+a)Fie secventa de cod: for(i=0;i<n;i++) for(j=0;j<n;j++) x[i][j]=x[i][j];
+Sa se analizeze dependenta de data in acest algoritm. Sa se calculeze limita
+asimptotica superioara a timpului de executie secventiala a algoritmului
+dat.
+b)Scrieti pseudocodul de executie paralalela intr-un calculator PRAM CREW cu
+p procesoare a algoritmului de la pucntul precedent si explicati modul de
+executie(distribuirea si partajarea datelor). Calculati timpul de executie
+paralela, accelerarea si eficienta de calcul. Pentru fiecare din acesti
+parametri sa se calculeze limita asimptotica superioara.
+c)Scrieti program de executie paralela a algoritmului de la pucntul a)
+folosind thread-uri.
+d)Fie urmatoarea secventa de cod in limbajul C:
+void main()//procesul parinte
+{
+	int i;char arg[5];
+	for(i=0;i<2;i++){itoa(i,arg,10);if(fork()==0) execlp("fiu","fiu",arg,(char *)0);
+}
+void main(int argc,char **argv)//proces "Fiu"
+{
+	if(!strcmp(argv[1],"1")) fork(); 
+	printf("Proces Fiu i=%s,pid:%d ppid=%d\n",argv[1],getpid(),getpptid());
+}
+Sa se indice arborele de reprezentare a proceselor create si care sunt
+emsajele afisate la consola la o executie oarecare.
+e)Fie fucntiile f1=5x3+2x+1 si f2=20x2-4. Sa se calculeze limita asimptotica
+superioara a functiei: f(x)=f1(x)+f2(x).
+f)Se da o retea grila bidimensionala cu 25 de noduri. Sa se indice traseul
+unui mesaj de la nodul (2,2) la nodul (4,4) in rutarea ordonata dupa
+dimensiuni (rutare XY).
+g)Se da o retea statica de interconectare cu n=64 noduri. Calculati
+diametrul si largimea bisectiei acestei retele pentru urmatoarele topologii:
+grila bidimensionala, hipercub, inel.
