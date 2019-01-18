@@ -1,3 +1,0 @@
-These examples need to be modified to use a timing harness similar to the
-ones used for the point-to-point routines.  On fast systems, these tests may
-complete too quickly.
