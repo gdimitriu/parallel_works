@@ -1,0 +1,10 @@
+# Do not remove the following line, or various programs
+# that require network functionality will fail.
+127.0.0.1	localhost.localdomain	localhost
+141.85.107.138	c8.windowsnt.tech.pub.ro	c8
+141.85.107.136	c6.windowsnt.tech.pub.ro	c6
+141.85.107.135	c5.windowsnt.tech.pub.ro	c5
+141.85.107.134	c4.windowsnt.tech.pub.ro	c4
+141.85.107.133	c3.windowsnt.tech.pub.ro	c3
+141.85.107.132	c2.windowsnt.tech.pub.ro	c2
+141.85.107.131	c1.windowsnt.tech.pub.ro	c1

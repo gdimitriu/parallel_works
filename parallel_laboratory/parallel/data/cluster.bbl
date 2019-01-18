@@ -1,0 +1,18 @@
+\begin{thebibliography}{1}\setlength{\itemsep}{-1ex}\small
+
+\bibitem{numerice}
+B.~Demidovici.
+\newblock {\em Elements de calcul numerique}.
+\newblock Mir, 1973.
+
+\bibitem{argone}
+http://www.anl.gov.
+
+\bibitem{kumar}
+V.Kumar.
+\newblock {\em Introduction to Parallel Computing. Design and Analysis of
+  Algorithms}.
+\newblock The Benjamin/cumming Publishing Company, Redwood City, California,
+  1994.
+
+\end{thebibliography}

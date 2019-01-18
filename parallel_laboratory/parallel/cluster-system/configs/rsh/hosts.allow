@@ -1,0 +1,12 @@
+#
+# hosts.allow	This file describes the names of the hosts which are
+#		allowed to use the local INET services, as decided
+#		by the '/usr/sbin/tcpd' server.
+#
+c8.windowsnt.tech.pub.ro
+c6.windowsnt.tech.pub.ro
+c5.windowsnt.tech.pub.ro
+c4.windowsnt.tech.pub.ro
+c3.windowsnt.tech.pub.ro
+c2.windownst.tech.pub.ro
+c1.windowsnt.tech.pub.ro

@@ -1,0 +1,13 @@
+# Change this file to contain the machines that you want to use
+# to run MPI jobs on.  The format is one host name per line, with either
+#    hostname
+# or 
+#    hostname:n
+# where n is the number of processors in an SMP.  The hostname should
+# be the same as the result from the command "hostname"
+c3.windowsnt.tech.pub.ro
+c8.windowsnt.tech.pub.ro
+c4.windowsnt.tech.pub.ro
+c5.windowsnt.tech.pub.ro
+c6.windowsnt.tech.pub.ro
+c2.windowsnt.tech.pub.ro

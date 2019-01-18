@@ -1,0 +1,33 @@
+
+This directory contains the code for the book "Using MPI"  for the
+"Parallel Libraries" Chapter.  
+
+
+Here are the files alluded to by figure...
+
+Figure                    Page                    File
+------                    ----                    ----
+6.1                       131                     ibcast_ex/ibcast.h
+6.2                       134                     ibcast_ex/ibcast1.c
+6.3                       135                     ibcast_ex/ibcast1.c
+***                       136 (in text change)    ibcast_ex/ibcast2.c
+6.4                       137                     ibcast_ex/ibcast_work.c
+6.5                       138                     ibcast_ex/ibcast_wait.c
+6.6                       139                     ibcast_ex/ibcast_copy.c
+6.7                       140                     ibcast_ex/ibcast_delete.c
+6.8                       141                     linalg/LA_library.h
+6.9                       142                     linalg/LA_library1.c
+6.10                      143                     linalg/LA_library2.c
+6.11                      144                     linalg/LA_dis1.h
+6.12                      145                     linalg/LA_dis2.h
+6.13                      (picture)
+6.14                      147                     linalg/LA_dvector.h
+6.15                      147                     linalg/LA_dmatrix.h
+6.16                      150                     linalg/LA_dvector_ddot_stride.c
+6.17                      151                     linalg/LAX_dvector_ddot_stride2.c
+6.18                      (code fragment)
+
+Fortran of LINPACK benchmark in MPI, 
+alluded to on page 149				  linpack.f/* (several files)
+
+

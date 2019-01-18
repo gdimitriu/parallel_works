@@ -1,0 +1,73 @@
+# Generated automatically from Makefile-mpe.in by configure.
+
+##### User configurable options #####
+
+MAKE          = make --no-print-directory
+
+MPI_CC        = mpicc
+MPI_F77       = mpif77
+MPI_CLINKER   = $(MPI_CC)
+MPI_FLINKER   = $(MPI_F77)
+#
+DEBUG_LIBS    = 
+MPI_INC       = 
+MPI_LIBS      =  -L$(PARALLEL)/lib -lpth
+MPE_CFLAGS    =  -DMPI_LINUX -DUSE_STDARG -DHAVE_PROTOTYPES 
+MPE_FFLAGS    = 
+MPE_INCDIR    = /home/gaby/private/mpich/include
+MPE_LIBDIR    = /home/gaby/private/mpich/lib
+PROF_LIBS     = -L$(MPE_LIBDIR) -lmpe $(MPI_LIBS)
+LOG_LIBS      = -L$(MPE_LIBDIR) -llmpe -lmpe $(MPI_LIBS)
+TRACE_LIBS    = -L$(MPE_LIBDIR) -ltmpe $(MPI_LIBS)
+ANIM_LIBS     = -L$(MPE_LIBDIR) -lampe -lmpe -L/usr/X11R6/lib -lX11 $(MPI_LIBS)
+XGRAPH_LIBS   = -L$(MPE_LIBDIR) -lmpe -L/usr/X11R6/lib -lX11 $(MPI_LIBS)
+F2CMPI_LIBS   = -lfmpich
+FLIB_PATH     = -L$(MPE_LIBDIR) $(F2CMPI_LIBS) -llmpe -lmpe \
+                $(MPI_LIBS)
+#
+INCLUDE_DIR   = -I$(MPE_INCDIR) $(MPI_INC) -I$(PARALLEL)/include
+LDFLAGS       = 
+NO_X          = 0
+NOF77         = 0
+RM            = /bin/rm
+
+### End User configurable options ###
+
+VPATH=.:$(srcdir)
+
+srcdir        = /home/gaby/private/work/parallel/learning/thread
+
+CFLAGS        = $(MPE_CFLAGS) $(INCLUDE_DIR) 
+FFLAGS        = $(MPE_FFLAGS) $(INCLUDE_DIR)
+CC_LDFLAGS    = $(LDFLAGS) $(MPE_CFLAGS)
+FC_LDFLAGS    = $(LDFLAGS) $(MPE_FFLAGS)
+EXECS         = testlog testtrace testanim
+OBJECT	      = newcom2.o
+
+all: $(EXECS)
+.c.o:
+	$(MPI_CC) $(CFLAGS) -c $<
+.f.o:
+	$(MPI_F77) $(FFLAGS) -c $<
+
+default: $(EXECS)
+	-if [ $(NOF77) = 0 ] ; then \
+	     $(MAKE) fpilog ; \
+	 fi
+
+testlog: $(OBJECT)
+	$(MPI_CLINKER) $(CC_LDFLAGS) -o $@ $? $(LOG_LIBS) $(DEBUG_LIBS) -lm
+
+testtrace: $(OBJECT)
+	$(MPI_CLINKER) $(CC_LDFLAGS) -o $@ $? $(TRACE_LIBS) $(DEBUG_LIBS) -lm
+
+testanim: $(OBJECT)
+	$(MPI_CLINKER) $(CC_LDFLAGS) -o $@ $? $(ANIM_LIBS) $(DEBUG_LIBS) -lm 
+
+
+clean:
+	@-$(RM) -f work.pc work.pcl
+	@-$(RM) -f *.o *~ PI* $(EXECS) 
+
+distclean: clean
+	@-$(RM) -f Makefile

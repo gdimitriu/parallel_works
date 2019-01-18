@@ -1,0 +1,10 @@
+#!/bin/bash
+#parallel area
+for k in gj-mpich-pthread ; do
+for j in 2; do
+for ((i=50;i<=1450;i=i+50));do
+mpirun -np $j ./$k $i 0.0000001
+done;
+mv time-par.dat $k-mpich126-$j.dat
+done;
+done;

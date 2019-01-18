@@ -1,0 +1,39 @@
+###### User configurable options ######
+ARCH		=@ARCH@
+COMM		=@COMM@
+INSTALL_DIR	=/usr/
+CC		=mpicc
+F77		=mpif77
+CLINKER		=$(CC)
+FLINKER		=$(F77)
+OPTFLAGS	=@OPTFLAGS@
+#
+LIB_PATH	=-L$(INSTALL_DIR)/lib/
+FLIB_PATH	=@FLIB_PATH_LEADER@$(INSTALL_DIR)/lib/
+LIB_LIST	=-lmpi
+#
+INCLUDE_DIR	=@INCLUDE_PATH@ -I$(INSTALL_DIR)/include -I../include -I/home/gaby/private/parallel/include
+
+### End User configurable options ###
+
+CFLAGS	=@CFLAGS@ $(OPTFLAGS) $(INCLUDE_DIR) -DMPI_$(ARCH)
+FFLAGS	=@FFLAGS@ $(INCLUDE_DIR) $(OPTFLAGS)
+LIBS 	=$(LIB_PATH) $(LIB_LIST)
+FLIBS 	=$(FLIB_PATH) $(LIB_LIST)
+EXECS	=libparallel-mpi-pthread.a
+OBJ	=extreme_pthread.o \
+	mult_sq_mat_check_mpi_pthread.o mult_sq_mat_check_mpi_cannon_pthread.o
+
+default: clean all
+
+all:	$(EXECS)
+
+$(EXECS): $(OBJ) $(INSTALL_DIR)/include/mpi.h 
+	ar -vq ../lib/$(EXECS) $(OBJ)
+	ranlib ../lib/$(EXECS)
+
+clean:
+	/bin/rm -f *.o *~ ../lib/$(EXECS) core
+
+.c.o:
+	$(CC) $(CFLAGS) -c $*.c

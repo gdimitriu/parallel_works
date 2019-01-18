@@ -1,0 +1,57 @@
+\chapter{Introducere}
+
+\hspace{5mm}Matricele se clasifica in doua categorii in functie de 
+numarul de zerouri pe care le contin. Prima catogie sunt matricele dense sau
+matrice pline, cu putine sau fara elemente zero. A doua categorie sunt
+matricele  sparse sau matrice rarefiate in care majoritatea elementelor sunt
+zero. Mai precis o matrice este considerata rarefiata daca in operatiile
+efectuate asupra ei se poate utiliza numarul si locatia elementelor zero
+pentru a reduce timpul de calcul a unei matrice dense de acceasi dimensiune.
+\section{Maparea maticelor pe procesoare}
+
+\hspace{5mm}Pentru a prelucra o matrice paralel sau distribuit trebuie sa
+partitionam matricea astfel incit partitiile respective sa fie asignate
+diferitelor procesoare sau masini. Partitionarea matricei are o foarte mare
+importanta in algoritmii paraleli deoarece o anumita partitionare poate
+influenta foarte mult timpul de executie a unui algoritm. De accea este bine
+sa determinam  care schema de mapare este mai apropiata de fiecare algoritm.
+Schemele complete de mapare sunt prezentate in \cite[151-168]{kumar}.
+
+\subsection{Partitionarea in benzi orientate (Striped partitioning)}
+
+In partitionarea in benzi orientate, matricea este divizata in grupuri de
+rinduri sau coloane complete, si fiecarui procesor (sistem) ii este asignat
+un asemenea grup. Partitionarea se numeste {\bf block-striped} daca fiecarui
+procesor ii sunt asignate rindurile sau coloanele continuu asa cum este
+prezentat in figura de mai jos a). Astfel in cazul unei matrice n x n pe p
+sisteme (numerotate $P_0,P_1,...,P_{p-1}$) pe coloane, sistemul $P_i$ contine
+coloanele cu indicele (n/p)i,(n/p)i+1,(n/p)i+2,...,(n/p)(i+1)-1.
+
+\label{partitionare-matrice}
+ In partitionarea {\bf cyclic-striped} se imparte matricea pe
+rinduri sau coloane care sunt distribuite ciclic in sisteme cum este prezentat
+ in figura de mai jos b). Astfel in cazul unei matrice n x n pe p sisteme
+(numerotate $P_0,P_1,...,P_{p-1}$) pe rinduri , sistemul $P_i$ contine
+rindurile cu indicii i,i+p,i+2p,...,i+n-p.
+
+\vspace{5mm}
+\includegraphics{mapare.ps}
+\vspace{5mm}
+
+Se poate partitiona si hibrid astfel se partitioneaza in blocuri continue
+care se distribuie ciclic (se numeste {\bf block-cyclic-striped}. In care
+matricea este impartita in blocuri de q rinduri ($q<n/p$) si aceste blocuri
+sunt distribuite pe  sisteme  intr-o maniera ciclica.
+\subsection{Partitionare pe blocuri ({\bf Checkeroard partitioning})}
+
+\hspace{5mm}In partitionarea pe blocuri matricea est divizata in blocuri
+mici rectangulare sau patrate sau submatrici care sunt distribuite pe
+sisteme. Intr-o partitionare pe blocuri uniforma aceste blocuri au aceeasi
+marime. O partitionare pe blocuri imparte si rindurile si coloanele deci
+nici unui sistem nu ii revine o line sau coloana intreaga. Ca si in
+partitionarea in benzi blocurile pot fi impartite in blocuri sau ciclic.
+Poate fi ciclica daca mapam rindurile pe procesoare intr-o maniera ciclica
+urmate de coloane. Similar putem crea un hibrid  block-cycling-checkerboard
+impartind matricea in $q^2p$ blocuri de marime q x q si alocindu-le intr-o
+maniera ciclica. Partitionare pe blocuri este o maniera naturala de a mapa o
+matrice pe o retea bidimensionala de sisteme sau procesoare.

@@ -1,0 +1,405 @@
+\section{calcule\_server.h}
+\subsection{Functia pentru eliminare gaussiana}
+\label{eliminare-imp}
+
+\hspace{5mm}/*
+
+\hspace{5mm}Hederul\ pentru\ calcule\ in\ server
+
+*/
+
+/*
+
+\hspace{5mm}Functia\ de\ testare\ host
+
+*/
+
+int\ test\_host()
+
+\{
+
+int\ test1\_index;
+
+\hspace{5mm}if(host==host\_nr)\ test1\_index=0;
+
+\hspace{5mm}else\ test1\_index=host+1;
+
+\hspace{5mm}if(masina==test1\_index)\ return\ 0;
+
+\hspace{5mm}else\ return\ 1;
+
+\}
+
+/*
+
+\hspace{5mm}Functia\ de\ schimbare\ a\ unei\ linii
+
+*/
+
+int\ schimb\_linie\_intern(int\ r,int\ schimb)
+
+\{
+
+float\ temporar1;
+
+int\ i,j;
+
+\hspace{5mm}if(r$<$(nr\_linii-1))
+
+\hspace{5mm}for(i=(r+1);i$<$nr\_linii;i++)
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}if((data[i][schimb]$>$1e-10)||(data[i][schimb]$<$(-1e-10)))
+
+\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}for(j=0;j$<$(variabila+1);j++)
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}temporar1=data[r][j];
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}data[r][j]=data[i][j];
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}data[i][j]=temporar1;
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}return\ 1;
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\}
+
+\hspace{5mm}return\ 0;
+
+\}
+
+/*\ 
+
+\hspace{5mm}Functia\ care\ realizeaza\ eliminarea\ gaussiana\ 
+
+*/
+
+void\ gaussian\_elimination()
+
+\{
+
+int\ i,j,k=0;
+
+int\ temp,test1;
+
+\ \ \ time\_2\_wait.tv\_sec=1;
+
+\ \ \ FD\_ZERO(\&read\_fd);
+
+\ \ \ FD\_ZERO(\&test1\_fd);
+
+\ \ \ FD\_SET(server\_socket\_dw,\&read\_fd);
+
+\ \ \ k=0;
+
+\ \ \ if((primul=='0')\&\&(k==0))
+
+\ \ \ \{
+
+\ \ \ \hspace{5mm}for(j=vector[k]+1;j$<$(variabila+1);j++)\ data[k][j]=data[k][j]/data[k][vector[k]];
+
+\ \ \ \hspace{5mm}data[k][vector[k]]=1;
+
+\ \ \ \hspace{5mm}//trimit\ care\ linie\ este
+
+\ \ \ \hspace{5mm}send(client\_socket\_up,\&vector[k],1,0);
+
+\ \ \ \hspace{5mm}//trimit\ ce\ masina\ a\ trimis
+
+\ \ \ \hspace{5mm}send(client\_socket\_up,\&host,1,0);
+
+\ \ \ \hspace{5mm}write(client\_socket\_up,data[k],(variabila+1)*sizeof(float));
+
+\ \ \ \hspace{5mm}if(nr\_linii$>$1)
+
+\hspace{5mm}\ \ \ for(i=(k+1);i$<$nr\_linii;i++)
+
+\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}for(j=(vector[k]+1);j$<$(variabila+1);j++)\ 
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}data[i][j]=data[i][j]-data[i][vector[k]]*data[k][j];
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}data[i][vector[k]]=0;
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\}
+
+\hspace{5mm}last=0;
+
+\ \ \ while(k$<$nr\_linii)
+
+\ \ \ \{
+
+\ \ \ \hspace{5mm}if((primul!='0')||(k!=0))\ 
+
+\hspace{5mm}\ \ \ \{
+
+\ \ \ \hspace{5mm}\hspace{5mm}flag=0;
+
+\hspace{5mm}\ \ \ \hspace{5mm}temp=0;
+
+\hspace{5mm}\ \ \ \hspace{5mm}while(flag==0)
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}memcpy(\&test1\_fd,\&read\_fd,sizeof(read\_fd));
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}select(server\_socket\_dw+1,\&test1\_fd,(fd\_set\ *)NULL,(fd\_set\ *)NULL,\&time\_2\_wait);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ if(FD\_ISSET(server\_socket\_dw,\&test1\_fd))
+
+\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\{
+
+\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}//receptionez\ ce\ linie\ este
+
+\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}linie=0;
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}recv(server\_socket\_dw,\&linie,1,0);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}//receptionez\ masina\ care\ a\ trimis
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}recv(server\_socket\_dw,\&masina,1,0);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}//receptionez\ linia
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}for(j=0;j$<$(variabila+1);j++)\ temporar[j]=0;
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}read(server\_socket\_dw,temporar,(variabila+1)*sizeof(float));
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}//trimit\ mai\ departe\ daca\ nu\ este\ ultima\ ecuatie
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}if(test\_host()==1)
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}if((ec\_ultim==1)\&\&(k==(nr\_linii-1)))\ ;
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}else
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}//trimit\ linia
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}send(client\_socket\_up,\&linie,1,0);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}//trimit\ indexul\ masinii
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}send(client\_socket\_up,\&masina,1,0);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}write(client\_socket\_up,temporar,(variabila+1)*sizeof(float));
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}//facem\ elimiarile
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}for(i=k;i$<$nr\_linii;i++)
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}for(j=(linie+1);j$<$(variabila+1);j++)\ 
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}data[i][j]=data[i][j]-data[i][linie]*temporar[j];
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}data[i][linie]=0;
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}temp++;
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}test1=vector[k]-last;
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}if(test1$>$host\_nr)\ test1=host\_nr;
+
+\hspace{5mm}\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}if(temp==test1)\ flag=1;
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \ \}\hspace{5mm}
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}//facem\ diviziunile
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}if((data[k][vector[k]]$<$1e-10)\&\&(data[k][vector[k]]$>$(-1e-10)))\ 
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}schimb\_linie\_intern(k,vector[k]);
+
+\hspace{5mm}\ \ \hspace{5mm}\hspace{5mm}for(j=(vector[k]+1);j$<$(variabila+1);j++)\ data[k][j]=data[k][j]/data[k][vector[k]];
+
+\ \ \ \hspace{5mm}\hspace{5mm}data[k][vector[k]]=1;
+
+\ \ \ \hspace{5mm}\hspace{5mm}//trimit\ linia\ daca\ nu\ este\ ultima\ ecuatie
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}if((ec\_ultim==1)\&\&(k==(nr\_linii-1)));
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}else
+
+\hspace{5mm}\hspace{5mm}\ \ \ \{
+
+\ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}//trimit\ care\ linie\ este
+
+\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}send(client\_socket\_up,\&vector[k],1,0);
+
+\ \ \ \hspace{5mm}\hspace{5mm}\hspace{5mm}//trimit\ indexul\ masinii
+
+\hspace{5mm}\ \ \ \hspace{5mm}\hspace{5mm}send(client\_socket\_up,\&host,1,0);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\ \ \hspace{5mm}write(client\_socket\_up,data[k],(variabila+1)*sizeof(float));
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\}
+
+\ \ \ \hspace{5mm}\hspace{5mm}if(nr\_linii$>$1)
+
+\hspace{5mm}\ \ \ \hspace{5mm}for(i=(k+1);i$<$nr\_linii;i++)
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}for(j=(vector[k]+1);j$<$(variabila+1);j++)\ 
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}data[i][j]=data[i][j]-data[i][vector[k]]*data[k][j];
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\hspace{5mm}data[i][vector[k]]=0;
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}last=vector[k];
+
+\hspace{5mm}\hspace{5mm}k++;
+
+\hspace{5mm}\}
+
+\hspace{5mm}k=0;
+
+\}
+
+
+\subsection{Functia pentru {\bf back-substitution}}
+\label{substitutie-imp}
+
+\hspace{5mm}/*\ 
+
+\hspace{5mm}Functia\ care\ realizeaza\ back-substitution\ 
+
+*/
+
+int\ back\_substitution()
+
+\{
+
+int\ i,j;
+
+\hspace{5mm}i=nr\_linii-1;
+
+\hspace{5mm}if((ec\_ultim==1)\&\&(i==(nr\_linii-1)))
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}//incepe\ substitutia,\ primul\ pas
+
+\hspace{5mm}\hspace{5mm}rezultate[variabila-1]=data[i][variabila];
+
+\hspace{5mm}\hspace{5mm}send(server\_socket\_dw,\&vector[i],1,0);
+
+\hspace{5mm}\hspace{5mm}write(server\_socket\_dw,\&rezultate[variabila-1],sizeof(float));
+
+\hspace{5mm}\hspace{5mm}i--;
+
+\hspace{5mm}\}
+
+\hspace{5mm}for(j=(vector[i]+1);j$<$variabila;j++)
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}linie=0;
+
+\hspace{5mm}\hspace{5mm}recv(client\_socket\_up,\&linie,1,0);
+
+\hspace{5mm}\hspace{5mm}read(client\_socket\_up,\&rezultate[j],sizeof(float));
+
+\hspace{5mm}\}
+
+\ \ \hspace{5mm}rezultate[vector[i]]=data[i][variabila];
+
+\ \ \hspace{5mm}for(j=(variabila-1);j$>$vector[i];j--)
+
+\ \ \hspace{5mm}\hspace{5mm}rezultate[vector[i]]-=data[i][j]*rezultate[j];
+
+\ \ \ if((primul=='0')\&\&(i==0))\ return\ 0;
+
+\ \ \ else
+
+\ \ \ \{
+
+\hspace{5mm}\hspace{5mm}for(j=vector[i];j$<$variabila;j++)
+
+\hspace{5mm}\hspace{5mm}\{
+
+\ \hspace{5mm}\hspace{5mm}\hspace{5mm}send(server\_socket\_dw,\&j,1,0);
+
+\ \hspace{5mm}\hspace{5mm}\hspace{5mm}write(server\_socket\_dw,\&rezultate[j],sizeof(float));
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}i--;
+
+\hspace{5mm}\}
+
+\hspace{5mm}while(i$>$=0)
+
+\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}for(j=vector[i+1];j$>$vector[i];j--)
+
+\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}recv(client\_socket\_up,\&linie,1,0);
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}read(client\_socket\_up,\&rezultate[linie],sizeof(float));
+
+\hspace{5mm}\hspace{5mm}\}
+
+\ \ \ \ \ \hspace{5mm}rezultate[vector[i]]=data[i][variabila];
+
+\hspace{5mm}\ \ \hspace{5mm}for(j=(variabila-1);j$>$vector[i];j--)
+
+\hspace{5mm}\ \ \ \hspace{5mm}rezultate[vector[i]]-=data[i][j]*rezultate[j];
+
+\hspace{5mm}\ \ \ if((primul=='0')\&\&(i==0))\ break;
+
+\hspace{5mm}\ \ \ else
+
+\hspace{5mm}\ \ \ \{
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}for(j=vector[i];j$<$(vector[i+1]+1);j++)
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\{
+
+\hspace{5mm}\ \hspace{5mm}\hspace{5mm}\hspace{5mm}send(server\_socket\_dw,\&j,1,0);
+
+\hspace{5mm}\ \hspace{5mm}\hspace{5mm}\hspace{5mm}write(server\_socket\_dw,\&rezultate[j],sizeof(float));
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\hspace{5mm}\hspace{5mm}i--;
+
+\hspace{5mm}\hspace{5mm}\}
+
+\hspace{5mm}\}
+
+\hspace{5mm}return\ 0;
+
+\}
+
+ÿ

@@ -1,0 +1,19 @@
+##### User configurable options #####
+
+ARCH        = @ARCH@
+COMM        = @COMM@
+INSTALL_DIR = @INSTALL_DIR@
+CC          = @CC@
+F77         = @F77@
+CLINKER     = @CLINKER@
+FLINKER     = @FLINKER@
+OPTFLAGS    = @OPTFLAGS@
+#
+LIB_PATH    = -L$(INSTALL_DIR)/lib/$(ARCH)/$(COMM)
+FLIB_PATH   = @FLIB_PATH_LEADER@$(INSTALL_DIR)/lib/$(ARCH)/$(COMM)
+LIB_LIST    = @LIB_LIST@
+#
+INCLUDE_DIR = @INCLUDE_PATH@ -I$(INSTALL_DIR)/include
+
+### End User configurable options ###
+

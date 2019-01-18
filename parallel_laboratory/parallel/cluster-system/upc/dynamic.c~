@@ -1,0 +1,24 @@
+#include <upc_relaxed.h>
+#include <stdio.h>
+shared int *vector;
+shared int result;
+int main()
+{
+  int i;
+  vector=upc_all_alloc(10,sizeof(in));
+  if(MYTHREAD==0)
+  {
+    for(i=0;i<10;i++)
+      vector[i]=1;
+     result=0;
+  }
+  upc_barrier;
+  upc_forall(i=0;i<10;i++)
+    result+=vector[i];
+  upc_barrier;
+  if(MYTHREAD==0)
+  {
+    printf("Result is %d",result);
+    fflush(stdout);
+  }
+}

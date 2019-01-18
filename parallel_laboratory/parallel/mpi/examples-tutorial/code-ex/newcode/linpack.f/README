@@ -1,0 +1,90 @@
+This is the release version as of 19-Sep-95
+------------------------------------------
+Initialized INFO to 0 in the function PDDGERES. Credits to 
+Shennon Shen <xshen@TC.Cornell.EDU> for pointing this.
+
+Purushotham Bangalore (puri@erc.msstate.edu; 601-325-4587}
+
+-------------------------------------------------------------------------------
+
+This is the release version as of 9-Dec-94
+------------------------------------------
+This directory contains files to run a double precision parallel dense
+linear solve software. The original software available in the public
+doamin is modified to make use of MPI message-passing primitives
+instead of the BLACS calls.  At certain places, the BLACS interface is
+retained with slight modification, and MPI primitives are used inside
+the calls, whereas at certain places BLACS are totally replaced with
+MPI calls. In order to help one understand the changes made, the
+original BLACS calls are retained within comments. These programs have
+been tested on network of workstations, Intel iPSC/860, and IBM SP1
+machines. This is the first attempt to make use of MPI instead of
+BLACS, hence there is still scope for further enhancements. Also the
+original code was written for complex numbers, where as this code usese
+double precision numbers. The estimation of one-norm condition number
+is not included in this modified version of the code.
+
+This is software provided for use with the book "Using MPI:  Portable
+Parallel Programming with the Message-Passing Interface," by Gropp,
+Lusk, Skjellum.  See page 149-152 (Section 6.4, entitled The LINPACK
+Benchmark in MPI.)
+
+Purushotham Bangalore (puri@erc.msstate.edu; 601-325-4587}
+
+BRIEF INSTRUCTIONS
+
+We include
+   configure
+   Makefile.in
+which is a prototype makefile.  This is turned into a real makefile
+by the program configure.
+
+to allow configuration of this software on a wide variety of platforms.
+
+		                         Makefile.in
+		 configure ------------------>|
+					      |
+					  Makefile
+					      |
+		 make ----------------------->|
+					      |
+					   programs
+
+Run
+---
+./configure (with OPTIONS) --- read the file configure (a Bourne shell script)
+make
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The following copyright notice that appears along with the original 
+code is as follows: 
+
+*
+*     VERSION 2.0 DATED Aug. 1992
+*     R. VAN DE GEIJN
+*
+*        This code resulted from a joint collaboration between  
+*              Robert van de Geijn 
+*     and the group for 'Research in Parallel Computational
+*     Electromagnetics' at the Jet Propulsion Laboratory.  Futher 
+*     information can be found in the paper,
+*
+*         T. Cwik, R. van de Geijn, and J. Patterson, 
+*         "Application of Massively Parallel Computation to 
+*          Integral Equation Models of Electromagnetic Scattering 
+*          (Invited Paper)," J. Opt. Soc. Am. A, Vol. 11, No. 4, 
+*          April 1994.
+*
+*     Please email your comments to the authors at
+*
+*        rvdg@cs.utexas.edu (Robert van de Geijn)
+*        cwik@yosemite.jpl.nasa.gov (Tom Cwik)
+*        jep@yosemite.jpl.nasa.gov  (Jean Patterson)
+*
+*     Use of this code must properly reference that paper.
+*
+*     The code is free, and comes with no implicit or explicit 
+*     guarantees.  
+*
+*     All rights reserved
+*     

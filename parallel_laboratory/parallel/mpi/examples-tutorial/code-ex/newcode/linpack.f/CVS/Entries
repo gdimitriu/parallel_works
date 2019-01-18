@@ -1,0 +1,26 @@
+/Makefile.in/1.1.1.1/Wed Oct 14 20:16:09 1998//
+/README/1.1.1.1/Wed Oct 14 20:16:09 1998//
+/bcast.f/1.1.1.1/Wed Oct 14 20:16:09 1998//
+/configure/1.1.1.1/Wed Oct 14 20:16:09 1998//
+/dlacpy.f/1.1.1.1/Wed Oct 14 20:16:09 1998//
+/main.f/1.1.1.1/Wed Oct 14 20:16:09 1998//
+/maxloc.f/1.1.1.1/Wed Oct 14 20:16:10 1998//
+/mpi_init.f/1.1.1.1/Wed Oct 14 20:16:10 1998//
+/mypart.f/1.1.1.1/Wed Oct 14 20:16:10 1998//
+/mysubmatrix.f/1.1.1.1/Wed Oct 14 20:16:10 1998//
+/pddgeres.f/1.1.1.1/Wed Oct 14 20:16:10 1998//
+/pdforback.f/1.1.1.1/Wed Oct 14 20:16:10 1998//
+/pdgemv.f/1.1.1.1/Wed Oct 14 20:16:10 1998//
+/pdltsv.f/1.1.1.1/Wed Oct 14 20:16:11 1998//
+/pdlu.f/1.1.1.1/Wed Oct 14 20:16:11 1998//
+/pdlub.f/1.1.1.1/Wed Oct 14 20:16:11 1998//
+/pdrhsswap.f/1.1.1.1/Wed Oct 14 20:16:11 1998//
+/pdtrsv.f/1.1.1.1/Wed Oct 14 20:16:11 1998//
+/pdutsv.f/1.1.1.1/Wed Oct 14 20:16:11 1998//
+/pdvredistr.f/1.1.1.1/Wed Oct 14 20:16:12 1998//
+/plamch2.f/1.1.1.1/Wed Oct 14 20:16:12 1998//
+/random.c/1.1.1.1/Wed Oct 14 20:16:12 1998//
+/recv.f/1.1.1.1/Wed Oct 14 20:16:12 1998//
+/send.f/1.1.1.1/Wed Oct 14 20:16:12 1998//
+/swap.f/1.1.1.1/Wed Oct 14 20:16:12 1998//
+D
