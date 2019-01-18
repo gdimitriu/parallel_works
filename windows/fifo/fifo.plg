@@ -1,0 +1,66 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: fifo - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x409 /fo"Debug/fifo.res" /d "_DEBUG" /d "_AFXDLL" "D:\work\lab-CP-win\fifo\fifo.rc"" 
+Creating temporary file "d:\TEMP\RSP3323.TMP" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "_AFXDLL" /Fp"Debug/fifo.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\work\lab-CP-win\fifo\fifo.cpp"
+"D:\work\lab-CP-win\fifo\serializare.cpp"
+"D:\work\lab-CP-win\fifo\serializare_criticals.cpp"
+"D:\work\lab-CP-win\fifo\serializare_event.cpp"
+"D:\work\lab-CP-win\fifo\serializare_mutex.cpp"
+"D:\work\lab-CP-win\fifo\serializare_sem.cpp"
+"D:\work\lab-CP-win\fifo\serializare_bariera.cpp"
+"D:\work\lab-CP-win\fifo\bariera.cpp"
+]
+Creating command line "cl.exe @d:\TEMP\RSP3323.TMP" 
+Creating temporary file "d:\TEMP\RSP3324.TMP" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "_AFXDLL" /Fp"Debug/fifo.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"D:\work\lab-CP-win\fifo\StdAfx.cpp"
+]
+Creating command line "cl.exe @d:\TEMP\RSP3324.TMP" 
+Creating temporary file "d:\TEMP\RSP3325.TMP" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/fifo.pdb" /debug /machine:I386 /out:"Debug/fifo.exe" /pdbtype:sept 
+".\Debug\fifo.obj"
+".\Debug\serializare.obj"
+".\Debug\serializare_criticals.obj"
+".\Debug\serializare_event.obj"
+".\Debug\serializare_mutex.obj"
+".\Debug\serializare_sem.obj"
+".\Debug\StdAfx.obj"
+".\Debug\fifo.res"
+".\Debug\serializare_bariera.obj"
+".\Debug\bariera.obj"
+]
+Creating command line "link.exe @d:\TEMP\RSP3325.TMP"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+fifo.cpp
+serializare.cpp
+serializare_criticals.cpp
+serializare_event.cpp
+serializare_mutex.cpp
+serializare_sem.cpp
+serializare_bariera.cpp
+bariera.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+fifo.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

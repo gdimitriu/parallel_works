@@ -1,0 +1,40 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: GE - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\WINDOWS\TEMP\RSP2031.TMP" with contents
+[
+/nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /D "_AFXDLL" /Fp"Release/GE.pch" /Yu"stdafx.h" /Fo"Release/" /Fd"Release/" /FD /c 
+"E:\work\lab-CP-win\Ge\bench.cpp"
+"E:\work\lab-CP-win\Ge\gauss.cpp"
+]
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSP2031.TMP" 
+Creating temporary file "C:\WINDOWS\TEMP\RSP2032.TMP" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:"Release/GE.pdb" /machine:I386 /out:"Release/GE.exe" 
+".\Release\bariera.obj"
+".\Release\bench.obj"
+".\Release\gauss.obj"
+".\Release\GE.obj"
+".\Release\StdAfx.obj"
+".\Release\GE.res"
+]
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSP2032.TMP"
+<h3>Output Window</h3>
+Compiling...
+bench.cpp
+gauss.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+GE.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
